@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#0b0806">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Shattrath">
+<title>Shattrath Trade — Outland Professions Idle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Marcellus&family=Roboto+Condensed:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#ffd100; --gold2:#c9a23c; --gold3:#8a6a26; --ink:#0b0806; --wood:#1d140c; --wood2:#130d08;
+  --q0:#9d9d9d; --q1:#ffffff; --q2:#1eff00; --q3:#0070dd; --q4:#a335ee; --q5:#ff8000;
+  --orange:#ff8040; --yellow:#ffff00; --green:#40bf40; --gray:#808080;
+  --ui: 'Marcellus', 'Palatino Linotype', Georgia, serif;
+  --num: 'Roboto Condensed', 'Arial Narrow', Arial, sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:var(--ui); color:#fff; font-size:14px; background:#070504;
+  background-image:
+    radial-gradient(ellipse at 50% -10%, rgba(120,70,20,.25), transparent 60%),
+    radial-gradient(ellipse at 50% 120%, rgba(60,20,80,.25), transparent 60%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .35  0 0 0 0 .25  0 0 0 0 .15  0 0 0 .22 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  -webkit-tap-highlight-color:transparent; overscroll-behavior:none;
+}
+button,input,select{font-family:inherit}
+a{color:inherit}
+.hidden{display:none!important}
+
+/* ---------- Frames ---------- */
+.frame{
+  position:relative; background:linear-gradient(180deg,#1b130c 0%,#120c07 100%);
+  border:1px solid #000; outline:1px solid #5d4627; outline-offset:-4px;
+  box-shadow:0 0 0 1px #2a1e10, 0 0 0 3px #000, inset 0 0 0 4px #000, inset 0 0 0 5px #3c2c18, inset 0 0 40px rgba(0,0,0,.7), 0 8px 30px rgba(0,0,0,.6);
+  border-radius:3px;
+}
+.frame::before,.frame::after{content:'';position:absolute;width:9px;height:9px;background:linear-gradient(135deg,#f6dd8b,#9a7429);transform:rotate(45deg);top:-4px;left:-4px;box-shadow:0 0 0 1px #000;z-index:2}
+.frame::after{left:auto;right:-4px}
+.ftitle{
+  margin:6px 6px 0; padding:7px 12px 6px; text-align:center; color:var(--gold); font-size:15px; letter-spacing:.5px;
+  background:linear-gradient(180deg,#3a0c08,#1e0604); border:1px solid #000; box-shadow:inset 0 0 0 1px #6b2a17, inset 0 6px 10px rgba(255,120,60,.08);
+  text-shadow:0 1px 0 #000, 0 0 6px rgba(0,0,0,.8);
+}
+.fbody{padding:10px 12px 12px}
+.parch{
+  background:#e8d6b0; color:#2b1a0c;
+  background-image:radial-gradient(ellipse at 30% 20%, rgba(255,255,255,.35), transparent 60%), radial-gradient(ellipse at 80% 90%, rgba(120,80,30,.35), transparent 55%);
+  border:1px solid #6b4b22; box-shadow:inset 0 0 25px rgba(90,55,20,.55); border-radius:2px; padding:10px 12px;
+}
+.parch .tq1{color:#2b1a0c}.parch .ilink:not(.tq1){text-shadow:0 0 2px #000,0 1px 1px #000}
+.parch h3{margin:0 0 4px;font-size:16px;color:#3a1d05}
+.sep{height:1px;background:linear-gradient(90deg,transparent,#6b5532,transparent);margin:10px 0}
+.lbl{color:var(--gold);}
+.muted{color:#a89a85}
+.small{font-size:12px}
+.num{font-family:var(--num)}
+.red{color:#ff2020}.grn{color:#1eff00}.yel{color:#ffd100}.wht{color:#fff}
+
+/* ---------- Buttons (UIPanelButton) ---------- */
+.btn{
+  font-family:var(--ui); font-size:13px; color:var(--gold); cursor:pointer; padding:5px 12px; min-height:26px;
+  background:linear-gradient(180deg,#a5160c 0%,#6b0904 48%,#4a0502 52%,#5d0703 100%);
+  border:1px solid #000; border-radius:3px; box-shadow:inset 0 0 0 1px #d0603c66, inset 0 1px 0 #ff9b7a55, 0 1px 2px #000;
+  text-shadow:0 1px 1px #000; white-space:nowrap;
+}
+.btn:hover{filter:brightness(1.25); color:#fff}
+.btn:active{transform:translateY(1px); filter:brightness(.85)}
+.btn[disabled]{filter:grayscale(1) brightness(.6); color:#999; cursor:default; transform:none}
+.btn.dark{background:linear-gradient(180deg,#3d3427,#211b13); box-shadow:inset 0 0 0 1px #6b5532, 0 1px 2px #000}
+.btn.sm{padding:2px 8px;font-size:12px;min-height:22px}
+.btn.big{font-size:17px;padding:9px 26px}
+
+/* ---------- Icons ---------- */
+.ic{position:relative;display:inline-block;width:40px;height:40px;flex:none;border-radius:4px;background:#222 linear-gradient(135deg,#3a3a3a,#141414);
+  box-shadow:0 0 0 1px #000, 0 0 0 2px var(--qc,#444), 0 2px 4px #000; overflow:hidden; vertical-align:middle}
+.ic::before{content:attr(data-l);position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font:700 13px var(--num);color:var(--qc,#ccc);text-shadow:0 1px 2px #000}
+.ic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.08)}
+.ic .ct{position:absolute;right:2px;bottom:0;font:700 13px var(--num);color:#fff;z-index:2;
+  text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000}
+.ic.s32{width:32px;height:32px}.ic.s26{width:26px;height:26px}.ic.s26 .ct{font-size:11px}.ic.s20{width:20px;height:20px;border-radius:3px}.ic.s56{width:56px;height:56px}
+.ic.dim img{filter:grayscale(1) brightness(.5)}
+.q0{--qc:var(--q0)}.q1{--qc:#5a5a5a}.q2{--qc:var(--q2)}.q3{--qc:var(--q3)}.q4{--qc:var(--q4)}.q5{--qc:var(--q5)}
+.tq0{color:var(--q0)}.tq1{color:var(--q1)}.tq2{color:var(--q2)}.tq3{color:#2a8cff}.tq4{color:#b558ff}.tq5{color:var(--q5)}
+.link{cursor:pointer}.link:hover{text-decoration:underline}
+
+/* ---------- Money ---------- */
+.money{font-family:var(--num);font-weight:700;white-space:nowrap;color:#fff;text-shadow:0 1px 1px #000}
+.money i{display:inline-block;width:11px;height:11px;border-radius:50%;margin:0 4px 0 2px;vertical-align:-1px;box-shadow:0 0 0 1px #000a}
+.money .cg{background:radial-gradient(circle at 35% 35%,#fff5b0,#f2c230 45%,#8a6408)}
+.money .cs{background:radial-gradient(circle at 35% 35%,#fff,#c8c8c8 45%,#6d6d6d)}
+.money .cc{background:radial-gradient(circle at 35% 35%,#ffd2a8,#c9733a 45%,#6b3412)}
+
+/* ---------- Bars ---------- */
+.bar{position:relative;height:18px;background:#000;border:1px solid #6e6e6e;border-radius:2px;box-shadow:0 0 0 1px #000, inset 0 0 6px #000;overflow:hidden}
+.bar>.fill{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(180deg,#ffd257,#d99400 50%,#b37200);width:0}
+.bar>.fill::after{content:'';position:absolute;right:-6px;top:-3px;bottom:-3px;width:12px;background:radial-gradient(ellipse,#fff8 0,#ffd10044 40%,transparent 70%)}
+.bar>span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:11.5px;text-shadow:0 1px 1px #000,0 0 3px #000;white-space:nowrap}
+.bar.skill>.fill{background:linear-gradient(180deg,#5a68ff,#2533c9 55%,#1a248f)}
+.bar.skill>.fill::after{display:none}
+.bar.rep>.fill{background:linear-gradient(180deg,#3fd23f,#118d11)}
+.bar.green>.fill{background:linear-gradient(180deg,#5fe05f,#1c8a1c)}
+.bar.thin{height:12px}
+
+/* ---------- Layout ---------- */
+#app{display:flex;flex-direction:column;min-height:100%}
+.top{display:flex;align-items:center;gap:12px;padding:8px 14px;background:linear-gradient(180deg,#120b06,#0b0704);border-bottom:1px solid #4d3a1e;box-shadow:0 2px 0 #000,0 6px 20px #000a;position:sticky;top:0;z-index:30}
+.logo{font-family:'Cinzel',serif;font-weight:900;font-size:20px;letter-spacing:1px;line-height:1;cursor:pointer;user-select:none;
+  background:linear-gradient(180deg,#fff2b0 0%,#f5c542 45%,#b77c12 55%,#ffe27a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 1px 0 #000) drop-shadow(0 0 6px rgba(255,160,40,.25))}
+.logo small{display:block;font-family:var(--ui);font-weight:400;font-size:10px;letter-spacing:2px;color:#b89a5a;-webkit-text-fill-color:#b89a5a;margin-top:2px}
+.who{margin-left:auto;text-align:right;line-height:1.25}
+.who .nm{color:#fff;font-size:15px}.who .tt{color:var(--gold);font-size:11px}
+.layout{flex:1;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:14px;padding:14px;max-width:1280px;width:100%;margin:0 auto}
+#side{display:flex;flex-direction:column;gap:14px;min-width:0}
+#main{min-width:0}
+.tabs{display:flex;gap:2px;padding:0 8px;margin-top:-1px}
+nav.tabs{position:sticky;bottom:0;z-index:30;background:linear-gradient(0deg,#0b0704,#140d07);border-top:1px solid #4d3a1e;padding:6px 8px calc(6px + env(safe-area-inset-bottom));justify-content:center;flex-wrap:nowrap;overflow-x:auto}
+.tab{font-family:var(--ui);cursor:pointer;color:#d8c08a;background:linear-gradient(180deg,#2a1e12,#170f08);border:1px solid #000;box-shadow:inset 0 0 0 1px #5d4627;border-radius:4px 4px 2px 2px;padding:7px 14px;font-size:13px;display:flex;align-items:center;gap:7px;white-space:nowrap}
+.tab .ic{width:20px;height:20px;border-radius:3px}
+.tab.on{color:var(--gold);background:linear-gradient(180deg,#4a1a0e,#220905);box-shadow:inset 0 0 0 1px #b07a32, 0 0 10px rgba(255,180,60,.2)}
+.tab .dot{width:8px;height:8px;border-radius:50%;background:#ff3c1e;box-shadow:0 0 6px #ff3c1e}
+.subtabs{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px}
+.subtabs .tab{padding:5px 10px;font-size:12.5px}
+
+/* ---------- Lists ---------- */
+.row{display:flex;align-items:center;gap:10px;padding:7px 8px;border-bottom:1px solid #2a1f13;min-height:48px}
+.row:hover{background:rgba(255,209,0,.04)}
+.row.sel{background:linear-gradient(90deg,rgba(255,209,0,.12),transparent);box-shadow:inset 2px 0 0 var(--gold)}
+.row .grow{flex:1;min-width:0}
+.row .t1{font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .t2{font-size:12px;color:#a89a85;margin-top:2px}
+.row.locked{opacity:.55}
+.drops{display:flex;gap:3px;flex-wrap:wrap;margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px;padding:8px;background:rgba(0,0,0,.35);border:1px solid #2c2014;border-radius:3px}
+.grid .slot{width:44px;height:44px;border-radius:4px;background:#0e0b08;box-shadow:inset 0 0 0 1px #2d2318,inset 0 0 8px #000;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.grid .slot .ic{width:40px;height:40px}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.kv{display:flex;justify-content:space-between;gap:10px;padding:2px 0}
+.hint{font-size:12px;color:#a89a85;font-style:italic}
+.pill{display:inline-block;font-size:11px;padding:1px 6px;border-radius:8px;border:1px solid #5d4627;color:#d8c08a;background:#1a120a}
+input.inp,select.inp{background:#0c0906;border:1px solid #5d4627;color:#fff;padding:7px 9px;border-radius:3px;font-size:14px;outline:none;box-shadow:inset 0 0 6px #000}
+input.inp:focus{border-color:#b07a32}
+
+/* ---------- Tradeskill colors ---------- */
+.d0{color:var(--orange)}.d1{color:var(--yellow)}.d2{color:var(--green)}.d3{color:var(--gray)}
+
+/* ---------- Now panel ---------- */
+.now .line{display:flex;align-items:center;gap:10px}
+.now .lt{font-size:13px;line-height:1.2;flex:1;min-width:0}
+.now .lt b{font-weight:400;color:var(--gold)}
+.now .bar{margin-top:6px}
+.queue{margin-top:8px;display:flex;flex-direction:column;gap:3px}
+.queue .qi{display:flex;align-items:center;gap:6px;font-size:12px;color:#ddd}
+.queue .qi .x{margin-left:auto;cursor:pointer;color:#c55;padding:0 4px}
+.sessionloot{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+
+/* ---------- Chat ---------- */
+.chat{display:flex;flex-direction:column;min-height:280px;max-height:46vh;background:rgba(0,0,0,.45);border:1px solid #2a2016;border-radius:3px}
+.chat .msgs{flex:1;overflow-y:auto;padding:6px 8px;font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.35;text-shadow:0 1px 1px #000}
+.chat .msgs div{margin:1px 0;word-wrap:break-word}
+.chat .in{display:flex;border-top:1px solid #2a2016}
+.chat .in input{flex:1;background:rgba(0,0,0,.5);border:0;color:#fff;padding:8px;font:13px Arial,sans-serif;outline:none}
+.c-sys{color:#ffff00}.c-skill{color:#5555ff}.c-loot{color:#00aa00}.c-guild{color:#40ff40}.c-trade{color:#ffc0c0}.c-gen{color:#ffc0c0}
+.c-whisper{color:#ff80ff}.c-yell{color:#ff4040}.c-emote{color:#ff8040}.c-ach{color:#ffff00}.c-craft{color:#00aa00}.c-raid{color:#ff4800}
+.c-skill{color:#6a6aff}
+.chat .msgs .x2{color:#aaa;font-size:11px}
+.chat a.ilink{cursor:pointer;text-decoration:none}
+
+/* ---------- Tooltip (GameTooltip) ---------- */
+.tip{position:fixed;z-index:100;pointer-events:none;max-width:320px;min-width:200px;padding:8px 10px;font-size:13px;line-height:1.38;
+  background:rgba(4,4,24,.94);border:1px solid #c8c8d8;border-radius:5px;box-shadow:0 0 0 1px #000, inset 0 0 0 1px #3b3b55, 0 4px 18px #000c}
+.tip .tn{font-size:15px;margin-bottom:1px}
+.tip .wh{color:#fff}.tip .gr{color:#1eff00}.tip .ye{color:#ffd100}.tip .gy{color:#9d9d9d}.tip .rd{color:#ff2020}
+.tip .flav{color:#ffd100;font-style:italic}
+.ttbox{background:rgba(4,4,24,.94);border:1px solid #c8c8d8;border-radius:5px;padding:10px 12px;box-shadow:inset 0 0 0 1px #3b3b55}
+
+/* ---------- Modal ---------- */
+.modal{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.6);padding:14px}
+.modal .frame{width:min(520px,100%);max-height:88vh;overflow:auto}
+.actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.qtyrow{display:flex;gap:6px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.qtyrow input{width:84px}
+
+/* ---------- Toasts / raid warning / achievement ---------- */
+#toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:90px;z-index:90;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.ach{pointer-events:auto;display:flex;align-items:center;gap:12px;min-width:300px;max-width:92vw;padding:10px 16px 10px 10px;border-radius:6px;
+  background:linear-gradient(180deg,#2b2b2b,#0d0d0d);border:2px solid #9a7a30;box-shadow:0 0 0 1px #000,inset 0 0 0 1px #e9c86a55,0 0 24px rgba(255,200,80,.25);animation:pop .4s ease-out}
+.ach .h{font-size:11px;letter-spacing:2px;color:#d4b25d;text-transform:uppercase}
+.ach .n{font-size:16px;color:#fff}
+.ach .pts{margin-left:auto;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:700 15px var(--num);color:#fff;
+  background:radial-gradient(circle at 40% 35%,#e9c86a,#7d5a14);box-shadow:0 0 0 2px #000,inset 0 0 6px #000a}
+.lootbox{pointer-events:auto;display:flex;align-items:center;gap:10px;padding:6px 12px 6px 6px;border-radius:4px;background:rgba(0,0,0,.82);border:1px solid #555;animation:pop .3s ease-out}
+@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+#raidwarn{position:fixed;top:22%;left:0;right:0;text-align:center;z-index:95;pointer-events:none;font:700 26px var(--ui);color:#ff4800;text-shadow:0 2px 2px #000,0 0 10px #000;padding:0 20px}
+#raidwarn.on{animation:rw 4.5s ease-out forwards}
+@keyframes rw{0%{opacity:0;transform:scale(1.3)}8%{opacity:1;transform:scale(1)}80%{opacity:1}100%{opacity:0}}
+
+/* ---------- Login / loading ---------- */
+.screen{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:20px;
+  background:radial-gradient(ellipse at 50% 30%, rgba(80,40,120,.45), transparent 60%), radial-gradient(ellipse at 50% 100%, rgba(30,110,90,.25), transparent 55%), #050307}
+.bigtitle{font-family:'Cinzel',serif;font-weight:900;font-size:clamp(34px,8vw,64px);letter-spacing:2px;text-align:center;line-height:1;
+  background:linear-gradient(180deg,#fff6c4 0%,#f6c843 40%,#a86d0c 58%,#ffe58a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 3px 0 #000) drop-shadow(0 0 18px rgba(255,150,30,.35))}
+.subtitle{font-family:'Cinzel',serif;color:#cfd8ff;letter-spacing:6px;font-size:clamp(11px,2.6vw,15px);margin-top:8px;text-align:center;text-shadow:0 0 10px #6a5cff}
+.loginbox{margin-top:30px;width:min(360px,100%)}
+.loginbox label{display:block;color:var(--gold);font-size:13px;margin:10px 0 4px;text-shadow:0 1px 1px #000}
+.loginbox input{width:100%}
+.realm{margin-top:18px;font-size:12px;color:#8b8fb0;text-align:center}
+.legal{position:absolute;bottom:10px;left:0;right:0;text-align:center;font-size:10.5px;color:#6b6475;padding:0 12px}
+.loadbar{width:min(520px,90%);margin-top:30px}
+.loadtip{margin-top:14px;max-width:560px;text-align:center;color:#ffd100;font-size:14px;text-shadow:0 1px 2px #000}
+
+/* ---------- Achievements ---------- */
+.achrow{display:flex;gap:10px;align-items:center;padding:8px;border:1px solid #2c2216;border-radius:4px;background:linear-gradient(180deg,#1b1611,#100c08);margin-bottom:6px}
+.achrow.got{border-color:#7d6122;background:linear-gradient(180deg,#2c2312,#15100a)}
+.achrow .grow{flex:1;min-width:0}
+.achrow .an{font-size:14.5px}.achrow .ad{font-size:12px;color:#a89a85}
+.achrow:not(.got) .ic img{filter:grayscale(1) brightness(.45)}
+.achrow .ap{font:700 14px var(--num);color:#ffd100;min-width:26px;text-align:center}
+.achrow .when{font-size:10.5px;color:#7f7260}
+
+@media (max-width: 900px){
+  .layout{grid-template-columns:1fr;padding:8px;gap:8px}
+  #side{order:-1}
+  #side .chatwrap{position:fixed;left:0;right:0;bottom:calc(52px + env(safe-area-inset-bottom));z-index:25;padding:0 6px}
+  #side .chatwrap .chat{min-height:0;max-height:none;height:118px;background:rgba(0,0,0,.82)}
+  #side .chatwrap.big .chat{height:52vh}
+  #main{margin-bottom:170px}
+  .tab{padding:7px 9px;font-size:12px}
+  nav.tabs .tab span.lab{display:none}
+  nav.tabs .tab .ic{width:26px;height:26px}
+  nav.tabs{justify-content:space-around}
+  .two{grid-template-columns:1fr}
+  .top{padding:6px 10px;gap:8px}.logo{font-size:15px;max-width:9.5em}.logo small{display:none}.who .tt{display:none}.who .nm{font-size:13px}
+  .now.frame{padding:0}
+  #toasts{bottom:190px}
+}
+</style>
+</head>
+<body>
+<div id="login" class="screen">
+  <div class="bigtitle">SHATTRATH TRADE</div>
+  <div class="subtitle">AN OUTLAND PROFESSIONS IDLE · PATCH 2.4.3</div>
+  <div class="loginbox frame"><div class="fbody">
+    <label>Character Name</label><input id="lgName" class="inp" maxlength="12" autocomplete="off" placeholder="Thrall">
+    <div id="lgOnline">
+      <label>Guild Code <span class="muted small">(same code for you and your friend)</span></label><input id="lgGuild" class="inp" maxlength="24" autocomplete="off" placeholder="e.g. ScryersOfMagenta">
+      <label>PIN <span class="muted small">(protects your character)</span></label><input id="lgPin" class="inp" type="password" inputmode="numeric" maxlength="8" placeholder="••••">
+    </div>
+    <div style="text-align:center;margin-top:16px"><button class="btn big" id="lgGo">Enter World</button></div>
+    <div id="lgErr" class="red small" style="text-align:center;margin-top:8px"></div>
+    <div class="realm" id="lgRealm"></div>
+  </div></div>
+  <div class="legal">Fan-made, non-commercial. World of Warcraft, item names and icons © Blizzard Entertainment. Icons served by Wowhead.</div>
+</div>
+<div id="loading" class="screen hidden">
+  <div class="bigtitle" style="font-size:clamp(28px,6vw,46px)">SHATTRATH CITY</div>
+  <div class="subtitle">TEROKKAR FOREST</div>
+  <div class="loadbar bar"><div class="fill" id="ldFill"></div></div>
+  <div class="loadtip" id="ldTip"></div>
+</div>
+<div id="app" class="hidden">
+  <header class="top">
+    <div class="logo" id="logo">SHATTRATH TRADE<small>OUTLAND PROFESSIONS</small></div>
+    <div class="who"><div class="nm" id="whoName"></div><div class="tt" id="whoTitle"></div></div>
+    <div id="whoMount"></div>
+    <div id="whoGold" class="money" style="font-size:16px"></div>
+  </header>
+  <div class="layout">
+    <section id="main" class="frame"><div class="ftitle" id="mainTitle"></div><div class="fbody" id="view"></div></section>
+    <aside id="side">
+      <div class="now frame"><div class="fbody" id="now"></div></div>
+      <div class="chatwrap" id="chatwrap"><div class="chat frame" style="padding:0">
+        <div class="msgs" id="msgs"></div>
+        <div class="in"><input id="chatIn" placeholder="Say something to your guild, or type /help" maxlength="200" autocomplete="off"><button class="btn sm dark" id="chatBig" style="margin:4px">⇕</button></div>
+      </div></div>
+    </aside>
+  </div>
+  <nav class="tabs" id="tabs"></nav>
+</div>
+<div id="tip" class="tip hidden"></div>
+<div id="modal" class="modal hidden"></div>
+<div id="toasts"></div>
+<div id="raidwarn"></div>
+<script>window.SHATTRATH_CONFIG = window.SHATTRATH_CONFIG || null;</script>
+<script src="config.js" onerror="void 0"></script>
+<script>
+const ITEMS = {"Hearthstone":{"q":1,"i":"inv_misc_rune_01","s":0,"il":1},"Thunderfury, Blessed Blade of the Windseeker":{"q":5,"i":"inv_sword_39","s":123140,"il":80,"sl":"One-Hand"},"Magical Crawdad Box":{"q":1,"i":"inv_box_petcarrier_01","s":2500,"il":70},"Murloc Costume":{"q":3,"i":"inv_misc_head_murloc_01","s":0,"il":1},"Smokywood Pastures Gift Pack":{"q":1,"i":"inv_misc_gift_01","s":0,"il":1},"Hallowed Wand - Pirate":{"q":1,"i":"inv_wand_12","s":0,"il":1},"Copper Ore":{"q":1,"i":"inv_ore_copper_01","s":5,"il":10},"Rough Stone":{"q":1,"i":"inv_stone_06","s":2,"il":5},"Malachite":{"q":2,"i":"inv_misc_gem_emerald_03","s":15,"il":7},"Tigerseye":{"q":2,"i":"inv_misc_gem_opal_03","s":100,"il":15},"Shadowgem":{"q":2,"i":"inv_misc_gem_amethyst_01","s":250,"il":20},"Tin Ore":{"q":1,"i":"inv_ore_tin_01","s":25,"il":20},"Coarse Stone":{"q":1,"i":"inv_stone_09","s":15,"il":15},"Silver Ore":{"q":2,"i":"inv_stone_16","s":75,"il":10},"Moss Agate":{"q":2,"i":"inv_misc_gem_emerald_02","s":400,"il":25},"Lesser Moonstone":{"q":2,"i":"inv_misc_gem_crystal_01","s":600,"il":30},"Iron Ore":{"q":1,"i":"inv_ore_iron_01","s":150,"il":30},"Heavy Stone":{"q":1,"i":"inv_stone_12","s":60,"il":25},"Gold Ore":{"q":2,"i":"inv_ore_gold_01","s":500,"il":25},"Jade":{"q":2,"i":"inv_misc_gem_stone_01","s":700,"il":35},"Citrine":{"q":2,"i":"inv_misc_gem_opal_02","s":800,"il":40},"Mithril Ore":{"q":1,"i":"inv_ore_mithril_02","s":250,"il":40},"Solid Stone":{"q":1,"i":"inv_stone_10","s":100,"il":35},"Truesilver Ore":{"q":2,"i":"inv_ore_truesilver_01","s":500,"il":40},"Aquamarine":{"q":2,"i":"inv_misc_gem_crystal_02","s":1000,"il":45},"Star Ruby":{"q":2,"i":"inv_misc_gem_ruby_02","s":5000,"il":50},"Thorium Ore":{"q":1,"i":"inv_ore_thorium_02","s":250,"il":40},"Dense Stone":{"q":1,"i":"inv_misc_stonetablet_07","s":250,"il":45},"Arcane Crystal":{"q":2,"i":"inv_misc_gem_topaz_01","s":2000,"il":60},"Blue Sapphire":{"q":2,"i":"inv_misc_gem_sapphire_02","s":7000,"il":55},"Large Opal":{"q":2,"i":"inv_misc_gem_opal_01","s":7000,"il":55},"Huge Emerald":{"q":2,"i":"inv_misc_gem_emerald_01","s":10000,"il":60},"Azerothian Diamond":{"q":2,"i":"inv_misc_gem_diamond_01","s":10000,"il":60},"Fel Iron Ore":{"q":1,"i":"inv_ore_feliron","s":1000,"il":60},"Mote of Earth":{"q":1,"i":"inv_elemental_mote_earth01","s":400,"il":65},"Mote of Fire":{"q":1,"i":"inv_elemental_mote_fire01","s":400,"il":65},"Eternium Ore":{"q":2,"i":"inv_ore_eternium","s":1250,"il":70},"Blood Garnet":{"q":2,"i":"inv_misc_gem_bloodgem_03","s":2500,"il":65},"Flame Spessarite":{"q":2,"i":"inv_misc_gem_flamespessarite_03","s":2500,"il":65},"Golden Draenite":{"q":2,"i":"inv_misc_gem_goldendraenite_03","s":2500,"il":65},"Deep Peridot":{"q":2,"i":"inv_misc_gem_deepperidot_03","s":2500,"il":65},"Azure Moonstone":{"q":2,"i":"inv_misc_gem_azuredraenite_03","s":2500,"il":65},"Shadow Draenite":{"q":2,"i":"inv_misc_gem_ebondraenite_03","s":2500,"il":65},"Adamantite Ore":{"q":1,"i":"inv_ore_adamantium","s":1500,"il":65},"Living Ruby":{"q":3,"i":"inv_jewelcrafting_livingruby_02","s":30000,"il":70},"Star of Elune":{"q":3,"i":"inv_jewelcrafting_starofelune_02","s":30000,"il":70},"Dawnstone":{"q":3,"i":"inv_jewelcrafting_dawnstone_02","s":30000,"il":70},"Talasite":{"q":3,"i":"inv_jewelcrafting_talasite_02","s":30000,"il":70},"Noble Topaz":{"q":3,"i":"inv_jewelcrafting_nobletopaz_02","s":30000,"il":70},"Nightseye":{"q":3,"i":"inv_jewelcrafting_nightseye_02","s":30000,"il":70},"Nethercite Ore":{"q":1,"i":"inv_ore_ethernium_01","s":1500,"il":70},"Netherwing Egg":{"q":2,"i":"inv_misc_shadowegg","s":0,"il":70},"Khorium Ore":{"q":2,"i":"inv_ore_khorium","s":2500,"il":70},"Mote of Mana":{"q":1,"i":"inv_elemental_mote_mana","s":400,"il":65},"Peacebloom":{"q":1,"i":"inv_misc_flower_02","s":10,"il":5},"Silverleaf":{"q":1,"i":"inv_misc_herb_10","s":10,"il":5},"Earthroot":{"q":1,"i":"inv_misc_herb_07","s":20,"il":5},"Briarthorn":{"q":1,"i":"inv_misc_root_01","s":25,"il":15},"Bruiseweed":{"q":1,"i":"inv_misc_herb_01","s":25,"il":20},"Swiftthistle":{"q":1,"i":"inv_misc_herb_04","s":15,"il":15},"Kingsblood":{"q":1,"i":"inv_misc_herb_03","s":30,"il":24},"Liferoot":{"q":1,"i":"inv_misc_root_02","s":75,"il":30},"Wild Steelbloom":{"q":1,"i":"inv_misc_flower_01","s":50,"il":22},"Goldthorn":{"q":1,"i":"inv_misc_herb_15","s":150,"il":34},"Khadgar's Whisker":{"q":1,"i":"inv_misc_herb_08","s":175,"il":37},"Fadeleaf":{"q":1,"i":"inv_misc_herb_12","s":125,"il":32},"Sungrass":{"q":1,"i":"inv_misc_herb_18","s":60,"il":46},"Gromsblood":{"q":1,"i":"inv_misc_herb_16","s":250,"il":50},"Golden Sansam":{"q":1,"i":"inv_misc_herb_sansamroot","s":100,"il":52},"Dreamfoil":{"q":1,"i":"inv_misc_herb_dreamfoil","s":100,"il":54},"Mountain Silversage":{"q":1,"i":"inv_misc_herb_mountainsilversage","s":150,"il":56},"Plaguebloom":{"q":1,"i":"inv_misc_herb_plaguebloom","s":250,"il":57},"Black Lotus":{"q":2,"i":"inv_misc_herb_blacklotus","s":1000,"il":60},"Felweed":{"q":1,"i":"inv_misc_herb_felweed","s":500,"il":60},"Mote of Life":{"q":1,"i":"inv_elemental_mote_life01","s":400,"il":65},"Fel Lotus":{"q":1,"i":"inv_misc_herb_fellotus","s":10000,"il":75},"Dreaming Glory":{"q":1,"i":"inv_misc_herb_dreamingglory","s":500,"il":60},"Ragveil":{"q":1,"i":"inv_misc_herb_ragveil","s":600,"il":65},"Flame Cap":{"q":1,"i":"inv_misc_herb_flamecap","s":750,"il":67},"Terocone":{"q":1,"i":"inv_misc_herb_terrocone","s":500,"il":60},"Netherbloom":{"q":1,"i":"inv_misc_herb_netherbloom","s":1000,"il":70},"Nightmare Vine":{"q":1,"i":"inv_misc_herb_nightmarevine","s":1250,"il":73},"Nightmare Seed":{"q":1,"i":"inv_misc_herb_nightmareseed","s":1250,"il":73},"Mana Thistle":{"q":1,"i":"inv_misc_herb_manathistle","s":2500,"il":75},"Light Leather":{"q":1,"i":"inv_misc_leatherscrap_03","s":15,"il":10},"Ruined Leather Scraps":{"q":1,"i":"inv_misc_pelt_bear_ruin_05","s":7,"il":5},"Light Hide":{"q":1,"i":"inv_misc_pelt_wolf_ruin_02","s":50,"il":10},"Medium Leather":{"q":1,"i":"inv_misc_leatherscrap_05","s":50,"il":20},"Medium Hide":{"q":1,"i":"inv_misc_pelt_boar_ruin_02","s":125,"il":20},"Heavy Leather":{"q":1,"i":"inv_misc_leatherscrap_07","s":150,"il":30},"Heavy Hide":{"q":1,"i":"inv_misc_pelt_wolf_ruin_03","s":200,"il":30},"Thick Leather":{"q":1,"i":"inv_misc_leatherscrap_08","s":300,"il":40},"Thick Hide":{"q":1,"i":"inv_misc_pelt_bear_ruin_01","s":500,"il":40},"Rugged Leather":{"q":1,"i":"inv_misc_leatherscrap_02","s":500,"il":50},"Rugged Hide":{"q":1,"i":"inv_misc_pelt_bear_ruin_02","s":500,"il":50},"Knothide Leather Scraps":{"q":1,"i":"inv_misc_leatherscrap_09","s":250,"il":60},"Knothide Leather":{"q":1,"i":"inv_misc_leatherscrap_10","s":1250,"il":60},"Fel Scales":{"q":1,"i":"inv_misc_monsterscales_04","s":1250,"il":60},"Thick Clefthoof Leather":{"q":1,"i":"inv_misc_leatherscrap_14","s":750,"il":60},"Wind Scales":{"q":1,"i":"inv_misc_monsterscales_06","s":1250,"il":60},"Nether Dragonscales":{"q":1,"i":"inv_misc_monsterscales_10","s":2000,"il":60},"Mote of Air":{"q":1,"i":"inv_elemental_mote_air01","s":400,"il":65},"Cobra Scales":{"q":1,"i":"inv_misc_monsterscales_18","s":1250,"il":60},"Raw Brilliant Smallfish":{"q":1,"i":"inv_misc_fish_08","s":1,"il":5},"Raw Longjaw Mud Snapper":{"q":1,"i":"inv_misc_fish_32","s":1,"il":15},"Raw Mithril Head Trout":{"q":1,"i":"inv_misc_fish_02","s":4,"il":35},"Raw Rockscale Cod":{"q":1,"i":"inv_misc_fish_04","s":4,"il":35},"Big-mouth Clam":{"q":1,"i":"inv_misc_shell_03","s":46,"il":40},"Raw Spotted Yellowtail":{"q":1,"i":"inv_misc_fish_01","s":4,"il":45},"Old Crafty":{"q":2,"i":"inv_misc_fish_35","s":2500,"il":20},"Old Ironjaw":{"q":2,"i":"inv_misc_fish_31","s":2500,"il":20},"Zangarian Sporefish":{"q":1,"i":"inv_misc_fish_34","s":8,"il":60},"Barbed Gill Trout":{"q":1,"i":"inv_misc_fish_37","s":8,"il":60},"Spotted Feltail":{"q":1,"i":"inv_misc_fish_39","s":8,"il":60},"Mote of Water":{"q":1,"i":"inv_elemental_mote_water01","s":400,"il":65},"Golden Darter":{"q":1,"i":"inv_misc_fish_36","s":8,"il":60},"Furious Crawdad":{"q":1,"i":"inv_misc_fish_14","s":8,"il":60},"Mr. Pinchy":{"q":3,"i":"inv_misc_fish_14","s":2000,"il":70},"Icefin Bluefish":{"q":1,"i":"inv_misc_fish_23","s":8,"il":60},"Huge Spotted Feltail":{"q":1,"i":"inv_misc_fish_39","s":500,"il":60},"Linen Cloth":{"q":1,"i":"inv_fabric_linen_01","s":13,"il":5},"Wool Cloth":{"q":1,"i":"inv_fabric_wool_01","s":33,"il":15},"Silk Cloth":{"q":1,"i":"inv_fabric_silk_01","s":150,"il":30},"Runecloth":{"q":1,"i":"inv_fabric_purplefire_01","s":400,"il":50},"Mageweave Cloth":{"q":1,"i":"inv_fabric_mageweave_01","s":250,"il":40},"Righteous Orb":{"q":2,"i":"inv_misc_gem_pearl_03","s":20000,"il":60},"Netherweave Cloth":{"q":1,"i":"inv_fabric_netherweave","s":800,"il":60},"Mote of Shadow":{"q":1,"i":"inv_elemental_mote_shadow01","s":400,"il":65},"Plans: Lionheart Champion":{"q":4,"i":"inv_scroll_04","s":15000},"Pattern: Frozen Shadoweave Robe":{"q":1,"i":"inv_scroll_03","s":15000,"il":75,"sl":"Chest"},"Plans: Ragesteel Breastplate":{"q":3,"i":"inv_scroll_05","s":25000,"il":74,"sl":"Chest","boe":1},"Primal Nether":{"q":3,"i":"inv_elemental_primal_nether","s":16000,"il":65},"Formula: Enchant Weapon - Mongoose":{"q":3,"i":"inv_misc_note_01","s":15000,"il":75},"Pattern: Spellfire Robe":{"q":1,"i":"inv_scroll_03","s":15000,"il":75,"sl":"Chest"},"Design: Figurine - Living Ruby Serpent":{"q":3,"i":"inv_scroll_05","s":15000},"Netherweb Spider Silk":{"q":1,"i":"spell_nature_web","s":5000,"il":60},"Pattern: Nethercobra Leg Armor":{"q":1,"i":"inv_scroll_03","s":30000,"il":73},"Pattern: Thick Netherscale Breastplate":{"q":4,"i":"inv_scroll_04","s":60000,"il":73,"sl":"Chest","boe":1},"Pattern: Primal Mooncloth Robe":{"q":1,"i":"inv_scroll_03","s":15000,"il":75,"sl":"Chest"},"Plans: Felsteel Longblade":{"q":4,"i":"inv_scroll_04","s":120000,"il":73,"sl":"One-Hand","boe":1},"Fiery Warhorse's Reins":{"q":4,"i":"ability_mount_dreadsteed","s":0,"il":70},"Formula: Enchant Weapon - Executioner":{"q":3,"i":"inv_misc_note_01","s":15000,"il":75},"Stalker's War Bands":{"q":4,"i":"inv_bracer_02","s":36305,"il":115,"sl":"Wrist"},"Gloves of Saintly Blessings":{"q":4,"i":"inv_gauntlets_17","s":23678,"il":115,"sl":"Hands"},"Vambraces of Courage":{"q":4,"i":"inv_bracer_19","s":40765,"il":115,"sl":"Wrist"},"Harbinger Bands":{"q":4,"i":"inv_bracer_13","s":24459,"il":115,"sl":"Wrist"},"Worgen Claw Necklace":{"q":4,"i":"inv_jewelry_necklace_22","s":128862,"il":115,"sl":"Neck"},"Spectral Band of Innervation":{"q":4,"i":"inv_jewelry_ring_31","s":60256,"il":115,"sl":"Finger"},"Reins of the Raven Lord":{"q":4,"i":"inv-mount_raven_54","s":0,"il":70},"Nether Vortex":{"q":4,"i":"inv_elemental_mote_nether","s":20000,"il":75},"Ashes of Al'ar":{"q":4,"i":"inv_misc_summerfest_brazierorange","s":0,"il":70},"Royal Cloak of Arathi Kings":{"q":4,"i":"inv_misc_cape_10","s":35640,"il":115,"sl":"Back"},"Krakken-Heart Breastplate":{"q":4,"i":"inv_chest_plate11","s":95073,"il":138,"sl":"Chest"},"The Night Watchman":{"q":4,"i":"inv_helmet_43","s":40162,"il":100,"sl":"Head","boe":1},"Mystic's Belt":{"q":2,"i":"inv_belt_26","s":188,"il":17,"sl":"Waist","boe":1},"Raider's Gauntlets":{"q":2,"i":"inv_gauntlets_04","s":358,"il":19,"sl":"Hands","boe":1},"Bard's Trousers":{"q":2,"i":"inv_pants_06","s":525,"il":18,"sl":"Legs","boe":1},"Feral Bindings":{"q":2,"i":"inv_bracer_05","s":208,"il":16,"sl":"Wrist","boe":1},"Blackrock Mace":{"q":2,"i":"inv_mace_06","s":1681,"il":21,"sl":"One-Hand","boe":1},"Ghostwalker Legguards":{"q":2,"i":"inv_pants_wolf","s":3949,"il":36,"sl":"Legs","boe":1},"Sparkleshell Headwrap":{"q":2,"i":"inv_helmet_39","s":4871,"il":40,"sl":"Head","boe":1},"Warden's Waistband":{"q":2,"i":"inv_belt_15","s":2655,"il":40,"sl":"Waist","boe":1},"Thistlefur Mantle":{"q":2,"i":"inv_shoulder_05","s":2060,"il":34,"sl":"Shoulder","boe":1},"Jouster's Visor":{"q":2,"i":"inv_helmet_57","s":5922,"il":40,"sl":"Head","boe":1},"Warleader's Greaves":{"q":2,"i":"inv_boots_05","s":20993,"il":60,"sl":"Feet","boe":1},"Engraved Girdle":{"q":2,"i":"inv_belt_11","s":11106,"il":57,"sl":"Waist","boe":1},"Impenetrable Helmet":{"q":2,"i":"inv_helmet_13","s":19071,"il":60,"sl":"Head","boe":1},"Savage Mail Tunic":{"q":2,"i":"inv_chest_plate03","s":25650,"il":62,"sl":"Chest","boe":1},"Runecloth Gloves":{"q":2,"i":"inv_gauntlets_25","s":6617,"il":55,"sl":"Hands","boe":1},"Eldr'naan Pants":{"q":2,"i":"inv_pants_cloth_10","s":30219,"il":114,"sl":"Legs","boe":1},"Shadow Council Chain":{"q":2,"i":"inv_belt_21","s":13695,"il":111,"sl":"Waist","boe":1},"Dreadhawk's Girdle":{"q":2,"i":"inv_belt_26","s":18615,"il":99,"sl":"Waist","boe":1},"Nether Trident":{"q":2,"i":"inv_spear_04","s":93772,"il":114,"sl":"Two-Hand","boe":1},"Shadow Dagger":{"q":2,"i":"inv_weapon_shortblade_05","s":72305,"il":114,"sl":"Main Hand","boe":1},"Rending Claw":{"q":2,"i":"inv_axe_09","s":85418,"il":102,"sl":"Two-Hand","boe":1},"The Master's Treads":{"q":3,"i":"inv_boots_cloth_05","s":29975,"il":109,"sl":"Feet","boe":1},"Amethyst Beholder Eye":{"q":3,"i":"inv_misc_eye_01","s":23980,"il":109,"sl":"Head","boe":1},"Abyss Walker's Boots":{"q":3,"i":"inv_boots_cloth_05","s":23239,"il":100,"sl":"Feet","boe":1},"Lifeblood Bracers":{"q":3,"i":"inv_bracer_11","s":17473,"il":112,"sl":"Wrist","boe":1},"Hope Ender":{"q":4,"i":"inv_sword_74","s":116363,"il":120,"sl":"One-Hand"},"Gavel of Pure Light":{"q":4,"i":"inv_hammer_04","s":400730,"il":100,"sl":"Main Hand"},"Copper Bar":{"q":1,"i":"inv_ingot_02","s":10,"il":10},"Tin Bar":{"q":1,"i":"inv_ingot_05","s":35,"il":20},"Bronze Bar":{"q":1,"i":"inv_ingot_bronze","s":50,"il":20},"Silver Bar":{"q":2,"i":"inv_ingot_01","s":100,"il":10},"Iron Bar":{"q":1,"i":"inv_ingot_iron","s":200,"il":30},"Gold Bar":{"q":2,"i":"inv_ingot_03","s":600,"il":30},"Mithril Bar":{"q":1,"i":"inv_ingot_06","s":400,"il":40},"Truesilver Bar":{"q":2,"i":"inv_ingot_08","s":1250,"il":50},"Thorium Bar":{"q":1,"i":"inv_ingot_07","s":600,"il":50},"Fel Iron Bar":{"q":1,"i":"inv_ingot_feliron","s":2000,"il":60},"Adamantite Bar":{"q":1,"i":"inv_ingot_10","s":3000,"il":65},"Eternium Bar":{"q":2,"i":"inv_ingot_11","s":2500,"il":70},"Felsteel Bar":{"q":2,"i":"inv_ingot_felsteel","s":22500,"il":60},"Khorium Bar":{"q":2,"i":"inv_ingot_09","s":12500,"il":70},"Hardened Adamantite Bar":{"q":1,"i":"inv_ingot_adamantite","s":30000,"il":65},"Rough Sharpening Stone":{"q":1,"i":"inv_stone_sharpeningstone_01","s":3,"il":5},"Copper Chain Pants":{"q":1,"i":"inv_pants_03","s":67,"il":9,"sl":"Legs"},"Runed Copper Belt":{"q":1,"i":"inv_belt_03","s":198,"il":18,"sl":"Waist"},"Coarse Sharpening Stone":{"q":1,"i":"inv_stone_sharpeningstone_02","s":10,"il":15},"Rough Bronze Leggings":{"q":2,"i":"inv_pants_03","s":962,"il":21,"sl":"Legs","boe":1},"Heavy Grinding Stone":{"q":1,"i":"inv_stone_grindingstone_03","s":100,"il":25},"Green Iron Bracers":{"q":1,"i":"inv_bracer_06","s":1106,"il":33,"sl":"Wrist"},"Heavy Mithril Gauntlet":{"q":2,"i":"inv_gauntlets_27","s":4359,"il":41,"sl":"Hands","boe":1},"Dense Sharpening Stone":{"q":1,"i":"inv_stone_sharpeningstone_05","s":75,"il":45},"Imperial Plate Bracers":{"q":2,"i":"inv_bracer_19","s":10638,"il":54,"sl":"Wrist","boe":1},"Fel Iron Plate Gloves":{"q":2,"i":"inv_gauntlets_03","s":20269,"il":90,"sl":"Hands","boe":1},"Fel Iron Breastplate":{"q":2,"i":"inv_chest_plate07","s":47475,"il":102,"sl":"Chest","boe":1},"Adamantite Cleaver":{"q":2,"i":"inv_axe_09","s":85143,"il":105,"sl":"Two-Hand","boe":1},"Adamantite Sharpening Stone":{"q":2,"i":"inv_stone_sharpeningstone_07","s":1000,"il":70},"Felsteel Gloves":{"q":3,"i":"inv_gauntlets_29","s":30311,"il":114,"sl":"Hands","boe":1},"Ragesteel Breastplate":{"q":3,"i":"inv_chest_chain_16","s":61891,"il":115,"sl":"Chest","boe":1},"Primal Fire":{"q":2,"i":"inv_elemental_primal_fire","s":4000,"il":65},"Felsteel Longblade":{"q":4,"i":"inv_sword_59","s":107762,"il":105,"sl":"One-Hand","boe":1},"Primal Earth":{"q":2,"i":"inv_elemental_primal_earth","s":4000,"il":65},"Lionheart Champion":{"q":4,"i":"inv_sword_2h_blacksmithing_02","s":153869,"il":123,"sl":"Two-Hand"},"Primal Might":{"q":3,"i":"spell_nature_lightningoverload","s":16000,"il":65},"Minor Healing Potion":{"q":1,"i":"inv_potion_49","s":5,"il":5},"Lesser Healing Potion":{"q":1,"i":"inv_potion_50","s":25,"il":13},"Healing Potion":{"q":1,"i":"inv_potion_51","s":75,"il":22},"Greater Healing Potion":{"q":1,"i":"inv_potion_52","s":125,"il":31},"Elixir of Fortitude":{"q":1,"i":"inv_potion_43","s":110,"il":35},"Superior Healing Potion":{"q":1,"i":"inv_potion_53","s":250,"il":45},"Major Healing Potion":{"q":1,"i":"inv_potion_54","s":1000,"il":55},"Elixir of the Mongoose":{"q":1,"i":"inv_potion_32","s":1250,"il":56},"Flask of the Titans":{"q":1,"i":"inv_potion_62","s":5000,"il":60},"Volatile Healing Potion":{"q":1,"i":"inv_potion_40","s":1000,"il":60},"Elixir of Major Agility":{"q":1,"i":"inv_potion_127","s":4000,"il":66},"Super Healing Potion":{"q":1,"i":"inv_potion_131","s":5000,"il":65},"Super Mana Potion":{"q":1,"i":"inv_potion_137","s":5000,"il":68},"Destruction Potion":{"q":1,"i":"inv_potion_107","s":5000,"il":70},"Recipe: Destruction Potion":{"q":2,"i":"inv_scroll_06","s":20000,"il":70},"Flask of Relentless Assault":{"q":1,"i":"inv_potion_117","s":20000,"il":75},"Recipe: Flask of Relentless Assault":{"q":1,"i":"inv_scroll_05","s":15000},"Primal Water":{"q":2,"i":"inv_elemental_primal_water","s":4000,"il":65},"Primal Air":{"q":2,"i":"inv_elemental_primal_air","s":4000,"il":65},"Primal Mana":{"q":2,"i":"inv_elemental_primal_mana","s":4000,"il":65},"Earthstorm Diamond":{"q":3,"i":"inv_misc_gem_diamond_04","s":30000,"il":70},"Skyfire Diamond":{"q":3,"i":"inv_misc_gem_diamond_05","s":30000,"il":70},"Delicate Copper Wire":{"q":1,"i":"inv_jewelcrafting_delicatecopperwire","s":20,"il":20},"Malachite Pendant":{"q":2,"i":"inv_jewelry_necklace_01","s":750,"il":18,"sl":"Neck","boe":1},"Tigerseye Band":{"q":2,"i":"inv_jewelry_ring_21","s":250,"il":18,"sl":"Finger","boe":1},"Bronze Setting":{"q":1,"i":"inv_jewelcrafting_bronzesetting","s":100,"il":22},"Solid Bronze Ring":{"q":2,"i":"inv_jewelry_ring_14","s":300,"il":22,"sl":"Finger","boe":1},"Thick Bronze Necklace":{"q":2,"i":"inv_belt_19","s":750,"il":22,"sl":"Neck","boe":1},"Mithril Filigree":{"q":1,"i":"inv_jewelcrafting_mithrilfiligree","s":900,"il":40},"Thorium Setting":{"q":1,"i":"inv_jewelcrafting_thoriumsetting","s":1250,"il":45},"Fel Iron Blood Ring":{"q":2,"i":"inv_jewelry_ring_39","s":24491,"il":93,"sl":"Finger","boe":1},"Bold Blood Garnet":{"q":2,"i":"inv_misc_gem_bloodgem_02","s":2500,"il":60},"Brilliant Golden Draenite":{"q":2,"i":"inv_misc_gem_goldendraenite_02","s":2500,"il":60},"Solid Azure Moonstone":{"q":2,"i":"inv_misc_gem_azuredraenite_02","s":2500,"il":60},"Runed Blood Garnet":{"q":2,"i":"inv_misc_gem_bloodgem_02","s":2500,"il":60},"Mercurial Adamantite":{"q":3,"i":"spell_arcane_arcanepotency","s":10000,"il":60},"Adamantite Powder":{"q":1,"i":"inv_misc_powder_adamantite","s":2250,"il":70},"Bold Living Ruby":{"q":3,"i":"inv_jewelcrafting_livingruby_03","s":30000,"il":70},"Design: Bold Living Ruby":{"q":3,"i":"inv_scroll_05","s":30000,"il":70},"Brilliant Dawnstone":{"q":3,"i":"inv_jewelcrafting_dawnstone_03","s":30000,"il":70},"Design: Brilliant Dawnstone":{"q":3,"i":"inv_scroll_05","s":30000,"il":70},"Thick Felsteel Necklace":{"q":3,"i":"inv_jewelry_necklace_17","s":39122,"il":113,"sl":"Neck","boe":1},"Design: Thick Felsteel Necklace":{"q":3,"i":"inv_scroll_05","s":30000,"il":71,"sl":"Neck","boe":1},"Relentless Earthstorm Diamond":{"q":3,"i":"inv_misc_gem_diamond_06","s":30000,"il":70},"Design: Relentless Earthstorm Diamond":{"q":3,"i":"inv_scroll_05","s":30000,"il":73},"Chaotic Skyfire Diamond":{"q":3,"i":"inv_misc_gem_diamond_07","s":30000,"il":70},"Design: Chaotic Skyfire Diamond":{"q":3,"i":"inv_scroll_05","s":30000,"il":73},"Figurine - Living Ruby Serpent":{"q":3,"i":"inv_jewelcrafting_rubyserpent","s":15000,"il":115},"Rough Blasting Powder":{"q":1,"i":"inv_misc_dust_01","s":4,"il":5},"Handful of Copper Bolts":{"q":1,"i":"inv_misc_gear_06","s":12,"il":8},"Rough Dynamite":{"q":1,"i":"inv_misc_bomb_06","s":30,"il":10},"Coarse Blasting Powder":{"q":1,"i":"inv_misc_dust_02","s":12,"il":15},"Bronze Tube":{"q":1,"i":"inv_gizmo_pipe_01","s":200,"il":21},"Heavy Blasting Powder":{"q":1,"i":"classic_inv_misc_dust_06","s":150,"il":25},"Solid Blasting Powder":{"q":1,"i":"inv_misc_powder_black","s":250,"il":35},"Mithril Casing":{"q":1,"i":"inv_gizmo_mithrilcasing_01","s":1000,"il":43},"Dense Blasting Powder":{"q":1,"i":"inv_misc_ammo_gunpowder_01","s":250,"il":50},"Thorium Widget":{"q":1,"i":"inv_gizmo_04","s":2500,"il":52},"Handful of Fel Iron Bolts":{"q":1,"i":"inv_gizmo_felironbolts","s":1500,"il":60},"Fel Iron Casing":{"q":1,"i":"inv_gizmo_felironcasing","s":8000,"il":60},"Elemental Blasting Powder":{"q":1,"i":"inv_misc_ammo_gunpowder_07","s":500,"il":60},"Fel Iron Bomb":{"q":1,"i":"inv_gizmo_felironbomb","s":2500,"il":60},"Adamantite Frame":{"q":1,"i":"inv_gizmo_adamantiteframe","s":10000,"il":65},"Hardened Adamantite Tube":{"q":1,"i":"inv_gizmo_hardenedadamantitetube","s":30000,"il":70},"Khorium Power Core":{"q":1,"i":"inv_gizmo_khoriumpowercore","s":12000,"il":70},"Felsteel Stabilizer":{"q":1,"i":"inv_gizmo_felstabilizer","s":12000,"il":70},"Flying Machine Control":{"q":3,"i":"ability_mount_gyrocoptor","s":0,"il":70},"Turbo-Charged Flying Machine Control":{"q":4,"i":"ability_mount_gyrocoptorelite","s":0,"il":70},"Light Armor Kit":{"q":1,"i":"inv_misc_armorkit_17","s":15,"il":5},"Handstitched Leather Boots":{"q":1,"i":"inv_boots_04","s":29,"il":8,"sl":"Feet"},"Medium Armor Kit":{"q":1,"i":"inv_misc_armorkit_15","s":200,"il":15},"Heavy Armor Kit":{"q":1,"i":"inv_misc_armorkit_16","s":650,"il":30},"Thick Armor Kit":{"q":1,"i":"inv_misc_armorkit_07","s":1000,"il":40},"Rugged Armor Kit":{"q":1,"i":"inv_misc_armorkit_09","s":1000,"il":50},"Knothide Armor Kit":{"q":1,"i":"inv_misc_armorkit_24","s":7500,"il":60},"Thick Draenic Boots":{"q":2,"i":"inv_boots_chain_01","s":24047,"il":99,"sl":"Feet","boe":1},"Heavy Knothide Leather":{"q":1,"i":"inv_misc_leatherscrap_11","s":6250,"il":65},"Felscale Breastplate":{"q":2,"i":"inv_chest_chain_13","s":39930,"il":108,"sl":"Chest","boe":1},"Cobrahide Leg Armor":{"q":3,"i":"inv_misc_armorkit_21","s":20000,"il":67},"Pattern: Cobrahide Leg Armor":{"q":1,"i":"inv_scroll_03","s":15000,"il":67},"Netherdrake Helm":{"q":4,"i":"inv_helmet_06","s":46388,"il":105,"sl":"Head","boe":1},"Pattern: Netherdrake Helm":{"q":4,"i":"inv_scroll_04","s":60000,"il":73,"sl":"Head","boe":1},"Drums of Battle":{"q":2,"i":"inv_misc_drum_02","s":5000,"il":73},"Pattern: Drums of Battle":{"q":1,"i":"inv_scroll_05","s":30000,"il":73},"Thick Netherscale Breastplate":{"q":4,"i":"inv_chest_plate08","s":62803,"il":105,"sl":"Chest","boe":1},"Nethercobra Leg Armor":{"q":4,"i":"inv_misc_armorkit_25","s":40000,"il":73},"Bolt of Linen Cloth":{"q":1,"i":"inv_fabric_linen_02","s":40,"il":10},"Linen Bag":{"q":1,"i":"inv_misc_bag_01","s":200,"il":5},"Bolt of Woolen Cloth":{"q":1,"i":"inv_fabric_wool_03","s":100,"il":25},"Woolen Bag":{"q":1,"i":"inv_misc_bag_10","s":300,"il":15},"Bolt of Silk Cloth":{"q":1,"i":"inv_fabric_silk_03","s":600,"il":35},"Silk Headband":{"q":1,"i":"inv_misc_bandana_01","s":999,"il":32,"sl":"Head"},"Bolt of Mageweave":{"q":1,"i":"inv_fabric_mageweave_03","s":1250,"il":45},"Mageweave Bag":{"q":1,"i":"inv_misc_bag_10_black","s":2500,"il":35},"Bolt of Runecloth":{"q":1,"i":"inv_fabric_purplefire_02","s":2000,"il":55},"Runecloth Bag":{"q":1,"i":"inv_misc_bag_19","s":5000,"il":52},"Bolt of Netherweave":{"q":1,"i":"inv_fabric_netherweave_bolt","s":4000,"il":60},"Netherweave Robe":{"q":2,"i":"inv_chest_cloth_29","s":29267,"il":111,"sl":"Chest","boe":1},"Netherweave Bag":{"q":2,"i":"inv_misc_bag_23_netherweave","s":10000,"il":63,"boe":1},"Bolt of Imbued Netherweave":{"q":2,"i":"inv_fabric_netherweave_bolt_imbued","s":8000,"il":66},"Arcane Dust":{"q":1,"i":"inv_enchant_dustarcane","s":0,"il":60},"Imbued Netherweave Bag":{"q":2,"i":"inv_misc_bag_24_netherweave_imbued","s":10000,"il":68,"boe":1},"Primal Mooncloth":{"q":3,"i":"inv_fabric_moonrag_primal","s":4000,"il":70},"Primal Life":{"q":2,"i":"inv_elemental_primal_life","s":4000,"il":65},"Spellcloth":{"q":3,"i":"inv_fabric_spellfire","s":4000,"il":70},"Shadowcloth":{"q":3,"i":"inv_fabric_felcloth_ebon","s":4000,"il":70},"Primal Shadow":{"q":2,"i":"inv_elemental_primal_shadow","s":4000,"il":65},"Primal Mooncloth Bag":{"q":3,"i":"inv_misc_bag_25_mooncloth","s":50000,"il":70,"boe":1},"Pattern: Primal Mooncloth Bag":{"q":3,"i":"inv_scroll_05","s":15000,"il":75,"boe":1},"Spellfire Robe":{"q":4,"i":"inv_chest_cloth_02","s":43584,"il":105,"sl":"Chest"},"Primal Mooncloth Robe":{"q":4,"i":"inv_chest_cloth_04","s":46852,"il":120,"sl":"Chest"},"Frozen Shadoweave Robe":{"q":4,"i":"inv_chest_cloth_08","s":44055,"il":105,"sl":"Chest"},"Enchant Bracer - Minor Health":{"q":2,"i":"inv_enchant_essencearcanelarge","s":0,"v":"enchant"},"Strange Dust":{"q":1,"i":"inv_enchant_duststrange","s":0,"il":10},"Enchant Bracer - Minor Stamina":{"q":2,"i":"inv_enchant_essencearcanelarge","s":0,"v":"enchant"},"Enchant Bracer - Lesser Strength":{"q":2,"i":"inv_enchant_essencearcanelarge","s":0,"v":"enchant"},"Soul Dust":{"q":1,"i":"inv_enchant_dustsoul","s":0,"il":25},"Enchant Cloak - Defense":{"q":2,"i":"inv_enchant_essencearcanelarge","s":0,"v":"enchant"},"Lesser Mystic Essence":{"q":2,"i":"inv_enchant_essencemysticalsmall","s":0,"il":30},"Enchant Gloves - Greater Agility":{"q":2,"i":"inv_enchant_essencearcanelarge","s":0,"v":"enchant"},"Illusion Dust":{"q":1,"i":"inv_enchant_dustillusion","s":0,"il":55},"Greater Eternal Essence":{"q":2,"i":"inv_enchant_essenceeternallarge","s":0,"il":55},"Enchant Weapon - Crusader":{"q":2,"i":"inv_enchant_essencearcanelarge","s":0,"v":"enchant"},"Large Brilliant Shard":{"q":3,"i":"inv_enchant_shardbrilliantlarge","s":0,"il":55},"Enchant Bracer - Assault":{"q":1,"i":"inv_misc_desecrated_clothbracer","s":650,"il":70},"Superior Mana Oil":{"q":1,"i":"inv_potion_101","s":1500,"il":62},"Large Prismatic Shard":{"q":3,"i":"inv_enchant_shardprismaticlarge","s":0,"il":70},"Small Prismatic Shard":{"q":3,"i":"inv_enchant_shardprismaticsmall","s":0,"il":65},"Superior Wizard Oil":{"q":1,"i":"inv_potion_141","s":1500,"il":68},"Enchant Chest - Exceptional Stats":{"q":1,"i":"inv_chest_chain_04","s":650,"il":70},"Greater Planar Essence":{"q":2,"i":"inv_enchant_essencearcanelarge","s":0,"il":65},"Formula: Enchant Chest - Exceptional Stats":{"q":1,"i":"inv_misc_note_01","s":15000,"il":69},"Enchant Weapon - Mongoose":{"q":1,"i":"inv_sword_11","s":650,"il":70},"Enchant Weapon - Executioner":{"q":2,"i":"inv_enchant_essencearcanelarge","s":0,"v":"enchant"},"Void Crystal":{"q":4,"i":"inv_enchant_voidcrystal","s":0,"il":70},"Lesser Magic Essence":{"q":2,"i":"inv_enchant_essencemagicsmall","s":0,"il":10},"Small Glimmering Shard":{"q":3,"i":"inv_enchant_shardglimmeringsmall","s":0,"il":20},"Small Glowing Shard":{"q":3,"i":"inv_enchant_shardglowingsmall","s":0,"il":30},"Brown Horse Bridle":{"q":3,"i":"ability_mount_ridinghorse","s":0,"il":30},"Swift Brown Steed":{"q":4,"i":"ability_mount_ridinghorse","s":0,"il":60},"Swift Purple Gryphon":{"q":4,"i":"ability_mount_gryphon_01","s":0,"il":70},"The Master's Key":{"q":1,"i":"inv_misc_key_07","s":0,"il":1}};
+// ===== GAME DATA — Burning Crusade (2.4.3) professions =====
+// Item names are the original English names; icons/quality/vendor price are resolved at build time.
+
+const PROFS = {
+  mining:        {n:'Mining',        kind:'gather', icon:'trade_mining',            verb:'Mining'},
+  herbalism:     {n:'Herbalism',     kind:'gather', icon:'spell_nature_naturetouchgrow', verb:'Herb Gathering'},
+  skinning:      {n:'Skinning',      kind:'gather', icon:'inv_misc_pelt_wolf_01',  verb:'Skinning'},
+  blacksmithing: {n:'Blacksmithing', kind:'craft',  icon:'trade_blacksmithing'},
+  alchemy:       {n:'Alchemy',       kind:'craft',  icon:'trade_alchemy'},
+  jewelcrafting: {n:'Jewelcrafting', kind:'craft',  icon:'inv_misc_gem_02'},
+  engineering:   {n:'Engineering',   kind:'craft',  icon:'trade_engineering'},
+  leatherworking:{n:'Leatherworking',kind:'craft',  icon:'trade_leatherworking'},
+  tailoring:     {n:'Tailoring',     kind:'craft',  icon:'trade_tailoring'},
+  enchanting:    {n:'Enchanting',    kind:'craft',  icon:'trade_engraving'},
+  fishing:       {n:'Fishing',       kind:'gather', icon:'trade_fishing', secondary:true, verb:'Fishing'},
+};
+const PRIMARY = ['mining','herbalism','skinning','blacksmithing','alchemy','jewelcrafting','engineering','leatherworking','tailoring','enchanting'];
+
+// Ranks: max skill, required skill to train, cost (copper)
+const RANKS = [
+  {n:'Apprentice', max:75,  req:0,   cost:100},
+  {n:'Journeyman', max:150, req:50,  cost:5000},
+  {n:'Expert',     max:225, req:125, cost:50000},
+  {n:'Artisan',    max:300, req:200, cost:250000},
+  {n:'Master',     max:375, req:275, cost:600000},
+];
+
+// ---------- Gathering spots ----------
+// drops: [item, min, max, chance]
+const SPOTS = {
+ mining: [
+  {id:'copper', n:'Copper Vein', z:'Elwynn Forest', req:1, t:12, drops:[['Copper Ore',1,2,1],['Rough Stone',1,2,.6],['Malachite',1,1,.03],['Tigerseye',1,1,.03],['Shadowgem',1,1,.01]]},
+  {id:'tin', n:'Tin Vein', z:'Redridge Mountains', req:65, t:14, drops:[['Tin Ore',1,2,1],['Coarse Stone',1,2,.55],['Silver Ore',1,1,.05],['Moss Agate',1,1,.03],['Shadowgem',1,1,.03],['Lesser Moonstone',1,1,.02]]},
+  {id:'iron', n:'Iron Deposit', z:'Arathi Highlands', req:125, t:16, drops:[['Iron Ore',1,2,1],['Heavy Stone',1,2,.55],['Gold Ore',1,1,.05],['Jade',1,1,.03],['Citrine',1,1,.02],['Lesser Moonstone',1,1,.02]]},
+  {id:'mithril', n:'Mithril Deposit', z:'Tanaris', req:175, t:18, drops:[['Mithril Ore',1,3,1],['Solid Stone',1,2,.55],['Truesilver Ore',1,1,.05],['Aquamarine',1,1,.03],['Star Ruby',1,1,.02]]},
+  {id:'thorium', n:'Small Thorium Vein', z:"Un'Goro Crater", req:230, t:20, drops:[['Thorium Ore',1,2,1],['Dense Stone',1,2,.55],['Arcane Crystal',1,1,.02],['Star Ruby',1,1,.03],['Blue Sapphire',1,1,.02],['Large Opal',1,1,.02],['Huge Emerald',1,1,.01],['Azerothian Diamond',1,1,.01]]},
+  {id:'feliron', n:'Fel Iron Deposit', z:'Hellfire Peninsula', req:300, t:28, outland:1, drops:[['Fel Iron Ore',2,3,1],['Mote of Earth',1,1,.12],['Mote of Fire',1,1,.08],['Eternium Ore',1,1,.03],['Blood Garnet',1,1,.012],['Flame Spessarite',1,1,.012],['Golden Draenite',1,1,.012],['Deep Peridot',1,1,.012],['Azure Moonstone',1,1,.012],['Shadow Draenite',1,1,.012]]},
+  {id:'adamantite', n:'Adamantite Deposit', z:'Nagrand', req:325, t:32, outland:1, drops:[['Adamantite Ore',2,4,1],['Mote of Earth',1,1,.2],['Eternium Ore',1,1,.06],['Blood Garnet',1,1,.012],['Flame Spessarite',1,1,.012],['Golden Draenite',1,1,.012],['Deep Peridot',1,1,.012],['Azure Moonstone',1,1,.012],['Shadow Draenite',1,1,.012],['Living Ruby',1,1,.003],['Star of Elune',1,1,.003],['Dawnstone',1,1,.003],['Talasite',1,1,.003],['Noble Topaz',1,1,.003],['Nightseye',1,1,.003]]},
+  {id:'nethercite', n:'Nethercite Deposit', z:'Netherwing Ledge', req:350, t:34, outland:1, flying:1, drops:[['Nethercite Ore',1,3,1],['Mote of Earth',1,1,.1],['Eternium Ore',1,1,.05],['Netherwing Egg',1,1,.02]]},
+  {id:'khorium', n:'Khorium Vein', z:'Netherstorm', req:375, t:38, outland:1, drops:[['Khorium Ore',1,3,1],['Mote of Mana',1,1,.12],['Mote of Earth',1,1,.12],['Eternium Ore',1,1,.1],['Living Ruby',1,1,.006],['Star of Elune',1,1,.006],['Dawnstone',1,1,.006],['Talasite',1,1,.006],['Noble Topaz',1,1,.006],['Nightseye',1,1,.006]]},
+ ],
+ herbalism: [
+  {id:'peacebloom', n:'Peacebloom & Silverleaf', z:'Elwynn Forest', req:1, t:12, drops:[['Peacebloom',1,2,.7],['Silverleaf',1,2,.6],['Earthroot',1,2,.3]]},
+  {id:'briarthorn', n:'Briarthorn', z:'The Barrens', req:70, t:14, drops:[['Briarthorn',1,2,1],['Bruiseweed',1,2,.5],['Swiftthistle',1,1,.05]]},
+  {id:'kingsblood', n:'Kingsblood', z:'Stranglethorn Vale', req:125, t:16, drops:[['Kingsblood',1,2,1],['Liferoot',1,2,.4],['Wild Steelbloom',1,2,.4]]},
+  {id:'goldthorn', n:'Goldthorn', z:'The Hinterlands', req:170, t:18, drops:[['Goldthorn',1,2,1],["Khadgar's Whisker",1,2,.5],['Fadeleaf',1,2,.4]]},
+  {id:'sungrass', n:'Sungrass', z:'Felwood', req:230, t:20, drops:[['Sungrass',1,2,1],['Gromsblood',1,2,.5],['Golden Sansam',1,2,.3]]},
+  {id:'dreamfoil', n:'Dreamfoil', z:'Winterspring', req:270, t:22, drops:[['Dreamfoil',1,2,1],['Mountain Silversage',1,2,.4],['Plaguebloom',1,2,.25],['Black Lotus',1,1,.008]]},
+  {id:'felweed', n:'Felweed', z:'Hellfire Peninsula', req:300, t:28, outland:1, drops:[['Felweed',2,3,1],['Mote of Life',1,1,.1],['Fel Lotus',1,1,.01]]},
+  {id:'dreamingglory', n:'Dreaming Glory', z:'Terokkar Forest', req:315, t:30, outland:1, drops:[['Dreaming Glory',1,3,1],['Felweed',1,2,.3],['Mote of Life',1,1,.1],['Fel Lotus',1,1,.012]]},
+  {id:'ragveil', n:'Ragveil', z:'Zangarmarsh', req:325, t:30, outland:1, drops:[['Ragveil',1,3,1],['Flame Cap',1,1,.06],['Mote of Life',1,1,.1],['Fel Lotus',1,1,.012]]},
+  {id:'terocone', n:'Terocone', z:'Terokkar Forest', req:325, t:30, outland:1, drops:[['Terocone',1,3,1],['Mote of Life',1,1,.1],['Fel Lotus',1,1,.012]]},
+  {id:'netherbloom', n:'Netherbloom', z:'Netherstorm', req:350, t:34, outland:1, drops:[['Netherbloom',1,3,1],['Mote of Mana',1,1,.12],['Fel Lotus',1,1,.015]]},
+  {id:'nightmarevine', n:'Nightmare Vine', z:'Shadowmoon Valley', req:365, t:36, outland:1, drops:[['Nightmare Vine',1,3,1],['Nightmare Seed',1,1,.25],['Mote of Life',1,1,.1],['Fel Lotus',1,1,.015]]},
+  {id:'manathistle', n:'Mana Thistle', z:'Skettis, Terokkar', req:375, t:38, outland:1, flying:1, drops:[['Mana Thistle',1,3,1],['Mote of Life',1,1,.2],['Fel Lotus',1,1,.02]]},
+ ],
+ skinning: [
+  {id:'light', n:'Wolves & Boars', z:'Elwynn Forest', req:1, t:12, drops:[['Light Leather',1,2,1],['Ruined Leather Scraps',1,2,.5],['Light Hide',1,1,.08]]},
+  {id:'medium', n:'Highland Raptors', z:'Arathi Highlands', req:100, t:14, drops:[['Medium Leather',1,2,1],['Medium Hide',1,1,.08]]},
+  {id:'heavy', n:'Jungle Tigers', z:'Stranglethorn Vale', req:150, t:16, drops:[['Heavy Leather',1,2,1],['Heavy Hide',1,1,.08]]},
+  {id:'thick', n:'Feral Yetis', z:'Feralas', req:200, t:18, drops:[['Thick Leather',1,2,1],['Thick Hide',1,1,.08]]},
+  {id:'rugged', n:'Shardtooth Bears', z:'Winterspring', req:250, t:20, drops:[['Rugged Leather',1,2,1],['Rugged Hide',1,1,.08]]},
+  {id:'knothide', n:'Ravagers & Felhounds', z:'Hellfire Peninsula', req:300, t:28, outland:1, drops:[['Knothide Leather Scraps',2,4,1],['Knothide Leather',1,1,.35],['Fel Scales',1,1,.12]]},
+  {id:'clefthoof', n:'Clefthoof & Windrocs', z:'Nagrand', req:325, t:30, outland:1, drops:[['Knothide Leather',1,2,1],['Knothide Leather Scraps',1,3,.6],['Thick Clefthoof Leather',1,1,.2],['Wind Scales',1,1,.12]]},
+  {id:'netherdrake', n:'Nether Drakes', z:'Netherwing Ledge', req:350, t:34, outland:1, flying:1, drops:[['Nether Dragonscales',1,2,.4],['Knothide Leather',1,2,1],['Mote of Air',1,1,.06]]},
+  {id:'cobra', n:'Coilskar Cobras', z:'Shadowmoon Valley', req:360, t:36, outland:1, drops:[['Cobra Scales',1,1,.3],['Knothide Leather',1,2,1],['Thick Clefthoof Leather',1,1,.08]]},
+ ],
+ fishing: [
+  {id:'crystallake', n:'Crystal Lake', z:'Elwynn Forest', req:1, t:14, drops:[['Raw Brilliant Smallfish',1,1,.6],['Raw Longjaw Mud Snapper',1,1,.4]]},
+  {id:'stv', n:'The Savage Coast', z:'Stranglethorn Vale', req:150, t:16, drops:[['Raw Mithril Head Trout',1,1,.5],['Raw Rockscale Cod',1,1,.4],['Big-mouth Clam',1,1,.1]]},
+  {id:'capitals', n:'Capital City Canals', z:'Orgrimmar / Ironforge', req:200, t:16, drops:[['Raw Spotted Yellowtail',1,1,.9],['Old Crafty',1,1,.002],['Old Ironjaw',1,1,.002]]},
+  {id:'zangarmarsh', n:'Sporefish Schools', z:'Zangarmarsh', req:300, t:24, outland:1, drops:[['Zangarian Sporefish',1,1,.5],['Barbed Gill Trout',1,1,.35],['Spotted Feltail',1,1,.25],['Mote of Water',1,1,.12]]},
+  {id:'terokkar', n:'Highland Mixed School', z:'Terokkar Forest', req:355, t:28, outland:1, drops:[['Golden Darter',1,1,.4],['Furious Crawdad',1,1,.3],['Mote of Water',1,1,.1],['Mr. Pinchy',1,1,.003]]},
+  {id:'nagrand', n:'Lake Sunspring', z:'Nagrand', req:375, t:28, outland:1, drops:[['Icefin Bluefish',1,1,.5],['Huge Spotted Feltail',1,1,.15],['Mote of Water',1,1,.14]]},
+ ],
+ combat: [
+  {id:'defias', n:'Defias Brotherhood', z:'Westfall', req:0, t:10, coin:[10,40], green:'low', gc:.05, drops:[['Linen Cloth',1,2,.7],['Wool Cloth',1,1,.15]]},
+  {id:'syndicate', n:'Syndicate Thugs', z:'Alterac Mountains', req:0, t:12, coin:[80,250], green:'mid', gc:.05, drops:[['Wool Cloth',1,2,.4],['Silk Cloth',1,2,.5]]},
+  {id:'scourge', n:'The Scourge', z:'Eastern Plaguelands', req:0, t:14, coin:[400,1200], green:'high', gc:.05, drops:[['Runecloth',1,2,.6],['Mageweave Cloth',1,2,.2],['Righteous Orb',1,1,.02]]},
+  {id:'illidari', n:'Illidari Legion', z:'Shadowmoon Valley', req:0, t:20, outland:1, coin:[1500,4000], green:'outland', gc:.06, bc:.008, ec:.0008, drops:[['Netherweave Cloth',1,3,.8],['Mote of Shadow',1,1,.05]], recipes:[['Plans: Lionheart Champion',.0008],['Pattern: Frozen Shadoweave Robe',.001],['Plans: Ragesteel Breastplate',.002]]},
+  {id:'ethereals', n:'Ethereum Smugglers', z:'Netherstorm', req:0, t:22, outland:1, coin:[2000,5000], green:'outland', gc:.06, bc:.01, ec:.001, drops:[['Netherweave Cloth',1,2,.6],['Mote of Mana',1,1,.06],['Primal Nether',1,1,.002]], recipes:[['Formula: Enchant Weapon - Mongoose',.0008],['Pattern: Spellfire Robe',.001],['Design: Figurine - Living Ruby Serpent',.001]]},
+  {id:'arakkoa', n:'Skettis Arakkoa', z:'Terokkar Forest', req:0, t:22, outland:1, coin:[1800,4500], green:'outland', gc:.06, bc:.01, ec:.001, drops:[['Netherweave Cloth',1,2,.6],['Mote of Air',1,1,.06],['Netherweb Spider Silk',1,1,.1]], recipes:[['Pattern: Nethercobra Leg Armor',.001],['Pattern: Thick Netherscale Breastplate',.0008],['Pattern: Primal Mooncloth Robe',.001],['Plans: Felsteel Longblade',.0008]]},
+  {id:'karazhan', n:'Karazhan — Attumen the Huntsman', z:'Deadwind Pass', req:0, t:75, outland:1, key:'kara', raid:1, coin:[20000,40000], green:'outland', gc:.2, bc:.3, drops:[['Netherweave Cloth',2,5,.9],['Primal Nether',1,1,.04],["Fiery Warhorse's Reins",1,1,.0015]], epics:["Stalker's War Bands",'Gloves of Saintly Blessings','Vambraces of Courage','Harbinger Bands','Worgen Claw Necklace','Spectral Band of Innervation'], ec:.5, recipes:[['Formula: Enchant Weapon - Executioner',.004]]},
+  {id:'anzu', n:'Sethekk Halls (Heroic) — Anzu', z:'Auchindoun', req:0, t:60, outland:1, key:'sethekk', raid:1, coin:[15000,30000], green:'outland', gc:.2, bc:.6, ec:.05, drops:[['Netherweave Cloth',2,4,.8],['Primal Nether',1,1,.06],['Reins of the Raven Lord',1,1,.002]], recipes:[]},
+  {id:'tempestkeep', n:"Tempest Keep — Kael'thas Sunstrider", z:'Netherstorm', req:0, t:120, outland:1, key:'tk', raid:1, coin:[50000,90000], green:'outland', gc:.3, bc:.5, drops:[['Primal Nether',1,2,.3],['Nether Vortex',1,1,.05],["Ashes of Al'ar",1,1,.0008]], epics:['Royal Cloak of Arathi Kings','Krakken-Heart Breastplate','The Night Watchman'], ec:.7, recipes:[]},
+ ],
+};
+const KEYS = {
+  kara:   {n:"The Master's Key", cost:3000000, icon:"The Master's Key", desc:"Attunement to Karazhan. Medivh's old tower awaits."},
+  sethekk:{n:'Key of the Raven Lord (Heroic)', cost:1500000, icon:'inv_misc_key_11', desc:'Heroic key from Lower City reputation. Anzu can be summoned with the Essence-Infused Moonstone.'},
+  tk:     {n:'The Tempest Key', cost:8000000, icon:'inv_misc_key_10', desc:"Attunement to The Eye. 'Tempest Keep was merely a setback!'"},
+};
+const GREENS = {
+  low: ["Mystic's Belt","Raider's Gauntlets",'Bard\'s Trousers','Feral Bindings','Blackrock Mace'],
+  mid: ['Ghostwalker Legguards','Sparkleshell Headwrap',"Warden's Waistband",'Thistlefur Mantle',"Jouster's Visor"],
+  high:["Warleader's Greaves",'Engraved Girdle','Impenetrable Helmet','Savage Mail Tunic','Runecloth Gloves'],
+  outland:["Eldr'naan Pants",'Shadow Council Chain',"Dreadhawk's Girdle",'Nether Trident','Shadow Dagger','Rending Claw'],
+  blue:["The Master's Treads",'Amethyst Beholder Eye',"Abyss Walker's Boots",'Lifeblood Bracers'],
+  epic:['Hope Ender','Gavel of Pure Light'],
+};
+
+// ---------- Recipes ----------
+// R(prof, output, qty, mats, [orange,yellow,green,gray], seconds, opts)
+const RECIPES = [];
+function R(p,o,q,m,s,t,x){RECIPES.push(Object.assign({p,o,q,m,s,t},x||{}));}
+// Mining: smelting
+R('mining','Copper Bar',1,{'Copper Ore':1},[1,25,47,70],2);
+R('mining','Tin Bar',1,{'Tin Ore':1},[65,65,70,75],2);
+R('mining','Bronze Bar',2,{'Copper Bar':1,'Tin Bar':1},[65,65,90,115],2);
+R('mining','Silver Bar',1,{'Silver Ore':1},[75,115,122,130],2);
+R('mining','Iron Bar',1,{'Iron Ore':1},[125,130,145,160],2);
+R('mining','Gold Bar',1,{'Gold Ore':1},[155,170,177,185],2);
+R('mining','Mithril Bar',1,{'Mithril Ore':1},[175,175,202,230],2);
+R('mining','Truesilver Bar',1,{'Truesilver Ore':1},[230,235,242,250],2);
+R('mining','Thorium Bar',1,{'Thorium Ore':1},[230,250,270,290],2);
+R('mining','Fel Iron Bar',1,{'Fel Iron Ore':2},[300,300,307,315],3);
+R('mining','Adamantite Bar',1,{'Adamantite Ore':2},[325,325,332,340],3);
+R('mining','Eternium Bar',1,{'Eternium Ore':2},[350,350,357,365],3);
+R('mining','Felsteel Bar',1,{'Fel Iron Bar':3,'Eternium Bar':2},[350,350,357,365],3);
+R('mining','Khorium Bar',1,{'Khorium Ore':2},[375,375,375,375],3);
+R('mining','Hardened Adamantite Bar',1,{'Adamantite Bar':10},[375,375,375,375],4);
+// Blacksmithing
+R('blacksmithing','Rough Sharpening Stone',1,{'Rough Stone':1},[1,15,35,55],2);
+R('blacksmithing','Copper Chain Pants',1,{'Copper Bar':4},[1,50,70,90],3);
+R('blacksmithing','Runed Copper Belt',1,{'Copper Bar':10},[90,115,127,140],3);
+R('blacksmithing','Coarse Sharpening Stone',1,{'Coarse Stone':2},[65,65,72,80],2);
+R('blacksmithing','Rough Bronze Leggings',1,{'Bronze Bar':6},[105,145,160,175],3);
+R('blacksmithing','Heavy Grinding Stone',1,{'Heavy Stone':3},[125,135,140,145],2);
+R('blacksmithing','Green Iron Bracers',1,{'Iron Bar':6},[165,185,197,210],3);
+R('blacksmithing','Heavy Mithril Gauntlet',1,{'Mithril Bar':6},[205,225,237,250],3);
+R('blacksmithing','Dense Sharpening Stone',1,{'Dense Stone':1},[250,255,257,260],2);
+R('blacksmithing','Imperial Plate Bracers',1,{'Thorium Bar':12},[270,290,300,310],3);
+R('blacksmithing','Fel Iron Plate Gloves',1,{'Fel Iron Bar':4},[300,310,320,330],3);
+R('blacksmithing','Fel Iron Breastplate',1,{'Fel Iron Bar':10},[325,335,345,355],4);
+R('blacksmithing','Adamantite Cleaver',1,{'Adamantite Bar':8},[330,345,355,365],4);
+R('blacksmithing','Adamantite Sharpening Stone',1,{'Adamantite Bar':1,'Mote of Earth':2},[350,350,357,365],2);
+R('blacksmithing','Felsteel Gloves',1,{'Felsteel Bar':6,'Hardened Adamantite Bar':1},[360,370,375,380],4);
+R('blacksmithing','Ragesteel Breastplate',1,{'Fel Iron Bar':12,'Adamantite Bar':8,'Primal Fire':4},[360,370,375,380],5,{src:'drop',ri:'Plans: Ragesteel Breastplate'});
+R('blacksmithing','Felsteel Longblade',1,{'Felsteel Bar':10,'Hardened Adamantite Bar':6,'Primal Earth':4},[365,375,380,385],5,{src:'drop',ri:'Plans: Felsteel Longblade'});
+R('blacksmithing','Lionheart Champion',1,{'Hardened Adamantite Bar':20,'Felsteel Bar':12,'Primal Might':5},[365,375,380,385],6,{src:'drop',ri:'Plans: Lionheart Champion'});
+// Alchemy
+R('alchemy','Minor Healing Potion',1,{'Peacebloom':1,'Silverleaf':1},[1,55,75,95],2,{spec:'potion'});
+R('alchemy','Lesser Healing Potion',1,{'Minor Healing Potion':1,'Briarthorn':1},[55,85,105,125],2,{spec:'potion'});
+R('alchemy','Healing Potion',1,{'Bruiseweed':1,'Briarthorn':1},[110,135,155,175],2,{spec:'potion'});
+R('alchemy','Greater Healing Potion',1,{'Liferoot':1,'Kingsblood':1},[155,175,195,215],2,{spec:'potion'});
+R('alchemy','Elixir of Fortitude',1,{'Wild Steelbloom':1,'Goldthorn':1},[175,195,215,235],2,{spec:'elixir'});
+R('alchemy','Superior Healing Potion',1,{'Sungrass':1,"Khadgar's Whisker":1},[215,230,250,270],2,{spec:'potion'});
+R('alchemy','Major Healing Potion',1,{'Golden Sansam':2,'Mountain Silversage':1},[275,290,300,310],2,{spec:'potion'});
+R('alchemy','Elixir of the Mongoose',1,{'Mountain Silversage':2,'Plaguebloom':2},[280,295,300,305],2,{spec:'elixir'});
+R('alchemy','Flask of the Titans',1,{'Gromsblood':30,'Black Lotus':1},[300,315,322,330],3,{spec:'elixir'});
+R('alchemy','Volatile Healing Potion',1,{'Golden Sansam':1,'Felweed':1},[300,315,322,330],2,{spec:'potion'});
+R('alchemy','Elixir of Major Agility',1,{'Terocone':1,'Felweed':2},[330,345,350,355],2,{spec:'elixir'});
+R('alchemy','Super Healing Potion',1,{'Netherbloom':2,'Felweed':1},[340,350,357,365],2,{spec:'potion'});
+R('alchemy','Super Mana Potion',1,{'Dreaming Glory':2,'Felweed':1},[340,350,357,365],2,{spec:'potion'});
+R('alchemy','Destruction Potion',1,{'Nightmare Vine':2,'Netherbloom':1},[350,360,370,380],2,{spec:'potion',src:'vendor',cost:80000,ri:'Recipe: Destruction Potion'});
+R('alchemy','Flask of Relentless Assault',1,{'Mana Thistle':7,'Nightmare Vine':3,'Fel Lotus':1},[375,385,390,395],3,{spec:'elixir',src:'rep',rep:9000,cost:150000,ri:'Recipe: Flask of Relentless Assault'});
+R('alchemy','Primal Might',1,{'Primal Earth':1,'Primal Water':1,'Primal Air':1,'Primal Fire':1,'Primal Mana':1},[350,370,385,400],3,{spec:'transmute',cd:20,cdk:'transmute'});
+R('alchemy','Earthstorm Diamond',1,{'Deep Peridot':3,'Shadow Draenite':3,'Golden Draenite':3,'Primal Earth':1,'Primal Water':1},[350,370,385,400],3,{spec:'transmute',cd:20,cdk:'transmute'});
+R('alchemy','Skyfire Diamond',1,{'Blood Garnet':3,'Flame Spessarite':3,'Azure Moonstone':3,'Primal Fire':1,'Primal Air':1},[350,370,385,400],3,{spec:'transmute',cd:20,cdk:'transmute'});
+// Jewelcrafting (prospecting handled as special recipes)
+R('jewelcrafting','Delicate Copper Wire',1,{'Copper Bar':2},[1,20,35,50],2);
+R('jewelcrafting','Malachite Pendant',1,{'Malachite':1,'Delicate Copper Wire':1},[20,50,65,80],2);
+R('jewelcrafting','Tigerseye Band',1,{'Tigerseye':1,'Delicate Copper Wire':1},[20,50,65,80],2);
+R('jewelcrafting','Bronze Setting',1,{'Bronze Bar':2},[50,80,95,110],2);
+R('jewelcrafting','Solid Bronze Ring',1,{'Bronze Bar':4},[80,105,120,135],2);
+R('jewelcrafting','Thick Bronze Necklace',1,{'Bronze Bar':2,'Shadowgem':1},[110,135,150,165],2);
+R('jewelcrafting','Mithril Filigree',1,{'Mithril Bar':2},[170,190,205,220],2);
+R('jewelcrafting','Thorium Setting',1,{'Thorium Bar':1},[250,250,262,275],2);
+R('jewelcrafting','Fel Iron Blood Ring',1,{'Fel Iron Bar':2,'Blood Garnet':2},[300,310,320,330],2);
+R('jewelcrafting','Bold Blood Garnet',1,{'Blood Garnet':1},[305,315,325,335],2);
+R('jewelcrafting','Brilliant Golden Draenite',1,{'Golden Draenite':1},[305,315,325,335],2);
+R('jewelcrafting','Solid Azure Moonstone',1,{'Azure Moonstone':1},[315,325,335,345],2);
+R('jewelcrafting','Runed Blood Garnet',1,{'Blood Garnet':1},[315,325,335,345],2);
+R('jewelcrafting','Mercurial Adamantite',1,{'Adamantite Powder':4,'Primal Earth':1},[325,335,340,345],2);
+R('jewelcrafting','Bold Living Ruby',1,{'Living Ruby':1},[350,365,372,380],2,{src:'vendor',cost:120000,ri:'Design: Bold Living Ruby'});
+R('jewelcrafting','Brilliant Dawnstone',1,{'Dawnstone':1},[350,365,372,380],2,{src:'vendor',cost:120000,ri:'Design: Brilliant Dawnstone'});
+R('jewelcrafting','Thick Felsteel Necklace',1,{'Felsteel Bar':2,'Mercurial Adamantite':1,'Living Ruby':1},[355,365,370,375],3,{src:'rep',rep:3000,cost:200000,ri:'Design: Thick Felsteel Necklace'});
+R('jewelcrafting','Relentless Earthstorm Diamond',1,{'Earthstorm Diamond':1},[365,375,380,385],3,{src:'rep',rep:21000,cost:400000,ri:'Design: Relentless Earthstorm Diamond'});
+R('jewelcrafting','Chaotic Skyfire Diamond',1,{'Skyfire Diamond':1},[365,375,380,385],3,{src:'rep',rep:21000,cost:400000,ri:'Design: Chaotic Skyfire Diamond'});
+R('jewelcrafting','Figurine - Living Ruby Serpent',1,{'Living Ruby':2,'Primal Fire':2,'Mercurial Adamantite':2},[370,375,380,385],4,{src:'drop',ri:'Design: Figurine - Living Ruby Serpent'});
+// Engineering
+R('engineering','Rough Blasting Powder',1,{'Rough Stone':1},[1,20,30,40],2);
+R('engineering','Handful of Copper Bolts',1,{'Copper Bar':1},[30,45,52,60],2);
+R('engineering','Rough Dynamite',2,{'Rough Blasting Powder':2,'Linen Cloth':1},[30,60,75,90],2,{boom:1});
+R('engineering','Coarse Blasting Powder',1,{'Coarse Stone':1},[75,85,90,95],2);
+R('engineering','Bronze Tube',1,{'Bronze Bar':2},[105,105,130,155],2);
+R('engineering','Heavy Blasting Powder',1,{'Heavy Stone':1},[125,135,140,145],2);
+R('engineering','Solid Blasting Powder',1,{'Solid Stone':2},[175,175,185,195],2);
+R('engineering','Mithril Casing',1,{'Mithril Bar':3},[215,225,235,245],2);
+R('engineering','Dense Blasting Powder',1,{'Dense Stone':2},[250,250,255,260],2);
+R('engineering','Thorium Widget',1,{'Thorium Bar':3,'Runecloth':1},[260,280,290,300],2);
+R('engineering','Handful of Fel Iron Bolts',1,{'Fel Iron Bar':1},[300,300,305,310],2);
+R('engineering','Fel Iron Casing',1,{'Fel Iron Bar':3},[300,300,305,310],2);
+R('engineering','Elemental Blasting Powder',1,{'Mote of Fire':1,'Mote of Earth':2},[300,310,315,320],2,{boom:1});
+R('engineering','Fel Iron Bomb',1,{'Fel Iron Casing':1,'Handful of Fel Iron Bolts':2,'Elemental Blasting Powder':1},[320,330,335,340],2,{boom:1});
+R('engineering','Adamantite Frame',1,{'Adamantite Bar':4,'Primal Earth':1},[325,340,350,360],3);
+R('engineering','Hardened Adamantite Tube',1,{'Hardened Adamantite Bar':1},[340,350,355,360],2);
+R('engineering','Khorium Power Core',1,{'Khorium Bar':3,'Primal Fire':1},[340,350,355,360],2);
+R('engineering','Felsteel Stabilizer',1,{'Felsteel Bar':2},[340,350,355,360],2);
+R('engineering','Flying Machine Control',1,{'Adamantite Frame':2,'Khorium Power Core':2,'Felsteel Stabilizer':4,'Netherweave Cloth':8},[350,360,370,380],8,{mount:3,bop:1});
+R('engineering','Turbo-Charged Flying Machine Control',1,{'Flying Machine Control':1,'Hardened Adamantite Tube':8,'Khorium Power Core':8,'Felsteel Stabilizer':8},[375,385,390,395],10,{mount:4,bop:1});
+// Leatherworking
+R('leatherworking','Light Armor Kit',1,{'Light Leather':1},[1,30,45,60],2);
+R('leatherworking','Handstitched Leather Boots',1,{'Light Leather':2},[1,40,55,70],2);
+R('leatherworking','Medium Armor Kit',1,{'Medium Leather':3},[100,115,122,130],2);
+R('leatherworking','Heavy Armor Kit',1,{'Heavy Leather':5},[150,170,180,190],2);
+R('leatherworking','Thick Armor Kit',1,{'Thick Leather':5},[200,220,230,240],2);
+R('leatherworking','Rugged Armor Kit',1,{'Rugged Leather':5},[250,255,265,275],2);
+R('leatherworking','Knothide Leather',1,{'Knothide Leather Scraps':5},[300,300,305,310],2);
+R('leatherworking','Knothide Armor Kit',1,{'Knothide Leather':4},[300,310,320,330],2);
+R('leatherworking','Thick Draenic Boots',1,{'Knothide Leather':6,'Fel Scales':2},[310,320,330,340],3);
+R('leatherworking','Heavy Knothide Leather',1,{'Knothide Leather':5},[325,335,340,345],2);
+R('leatherworking','Felscale Breastplate',1,{'Knothide Leather':8,'Fel Scales':4},[335,345,355,365],3);
+R('leatherworking','Cobrahide Leg Armor',1,{'Cobra Scales':4,'Heavy Knothide Leather':2,'Primal Air':1},[335,345,355,365],3,{src:'vendor',cost:60000,ri:'Pattern: Cobrahide Leg Armor'});
+R('leatherworking','Netherdrake Helm',1,{'Nether Dragonscales':6,'Heavy Knothide Leather':4,'Primal Air':2},[365,375,380,385],4,{src:'vendor',cost:300000,ri:'Pattern: Netherdrake Helm'});
+R('leatherworking','Drums of Battle',1,{'Heavy Knothide Leather':6,'Thick Clefthoof Leather':4},[365,375,380,385],3,{src:'rep',rep:9000,cost:250000,ri:'Pattern: Drums of Battle'});
+R('leatherworking','Thick Netherscale Breastplate',1,{'Nether Dragonscales':8,'Heavy Knothide Leather':6,'Primal Fire':4},[365,375,380,385],5,{src:'drop',ri:'Pattern: Thick Netherscale Breastplate'});
+R('leatherworking','Nethercobra Leg Armor',1,{'Cobra Scales':4,'Heavy Knothide Leather':4,'Primal Air':4},[365,375,380,385],4,{src:'drop',ri:'Pattern: Nethercobra Leg Armor'});
+// Tailoring
+R('tailoring','Bolt of Linen Cloth',1,{'Linen Cloth':2},[1,25,37,50],2);
+R('tailoring','Linen Bag',1,{'Bolt of Linen Cloth':3},[45,70,82,95],2);
+R('tailoring','Bolt of Woolen Cloth',1,{'Wool Cloth':3},[75,90,97,105],2);
+R('tailoring','Woolen Bag',1,{'Bolt of Woolen Cloth':4},[80,105,117,130],2);
+R('tailoring','Bolt of Silk Cloth',1,{'Silk Cloth':4},[125,135,140,145],2);
+R('tailoring','Silk Headband',1,{'Bolt of Silk Cloth':3},[160,170,175,180],2);
+R('tailoring','Bolt of Mageweave',1,{'Mageweave Cloth':4},[175,180,182,185],2);
+R('tailoring','Mageweave Bag',1,{'Bolt of Mageweave':4},[175,200,212,225],2);
+R('tailoring','Bolt of Runecloth',1,{'Runecloth':4},[250,255,257,260],2);
+R('tailoring','Runecloth Bag',1,{'Bolt of Runecloth':5},[260,280,290,300],2);
+R('tailoring','Bolt of Netherweave',1,{'Netherweave Cloth':5},[300,325,337,350],2);
+R('tailoring','Netherweave Robe',1,{'Bolt of Netherweave':6},[305,320,330,340],3);
+R('tailoring','Netherweave Bag',1,{'Bolt of Netherweave':4},[315,320,325,330],3);
+R('tailoring','Bolt of Imbued Netherweave',1,{'Bolt of Netherweave':3,'Arcane Dust':2},[325,340,345,350],2);
+R('tailoring','Imbued Netherweave Bag',1,{'Bolt of Imbued Netherweave':4,'Netherweb Spider Silk':2},[340,350,355,360],3);
+R('tailoring','Primal Mooncloth',1,{'Bolt of Imbued Netherweave':1,'Primal Life':1,'Primal Water':1},[350,365,375,385],3,{cd:92,cdk:'mooncloth'});
+R('tailoring','Spellcloth',1,{'Bolt of Imbued Netherweave':1,'Primal Mana':1,'Primal Fire':1},[350,365,375,385],3,{cd:92,cdk:'spellcloth'});
+R('tailoring','Shadowcloth',1,{'Bolt of Imbued Netherweave':1,'Primal Shadow':1,'Primal Fire':1},[350,365,375,385],3,{cd:92,cdk:'shadowcloth'});
+R('tailoring','Primal Mooncloth Bag',1,{'Primal Mooncloth':4,'Bolt of Imbued Netherweave':2},[375,385,390,395],4,{src:'rep',rep:21000,cost:300000,ri:'Pattern: Primal Mooncloth Bag'});
+R('tailoring','Spellfire Robe',1,{'Spellcloth':4,'Bolt of Imbued Netherweave':4,'Primal Mana':2},[365,375,380,385],5,{src:'drop',ri:'Pattern: Spellfire Robe'});
+R('tailoring','Primal Mooncloth Robe',1,{'Primal Mooncloth':5,'Bolt of Imbued Netherweave':4,'Primal Life':2},[365,375,380,385],5,{src:'drop',ri:'Pattern: Primal Mooncloth Robe'});
+R('tailoring','Frozen Shadoweave Robe',1,{'Shadowcloth':5,'Bolt of Imbued Netherweave':4,'Primal Water':3},[365,375,380,385],5,{src:'drop',ri:'Pattern: Frozen Shadoweave Robe'});
+// Enchanting (enchants are services: sold to players via Trade chat / market)
+R('enchanting','Enchant Bracer - Minor Health',1,{'Strange Dust':1},[1,70,90,110],2);
+R('enchanting','Enchant Bracer - Minor Stamina',1,{'Strange Dust':3},[50,90,110,130],2);
+R('enchanting','Enchant Bracer - Lesser Strength',1,{'Soul Dust':2},[140,165,185,205],2);
+R('enchanting','Enchant Cloak - Defense',1,{'Soul Dust':3,'Lesser Mystic Essence':1},[175,195,215,235],2);
+R('enchanting','Enchant Gloves - Greater Agility',1,{'Illusion Dust':3,'Greater Eternal Essence':3},[270,290,300,310],2);
+R('enchanting','Enchant Weapon - Crusader',1,{'Large Brilliant Shard':4},[290,300,310,320],3);
+R('enchanting','Enchant Bracer - Assault',1,{'Arcane Dust':6},[300,310,320,330],2);
+R('enchanting','Superior Mana Oil',1,{'Arcane Dust':3,'Netherbloom':1},[310,325,330,340],2);
+R('enchanting','Large Prismatic Shard',1,{'Small Prismatic Shard':3},[335,335,335,335],2);
+R('enchanting','Superior Wizard Oil',1,{'Arcane Dust':3,'Nightmare Vine':1},[340,350,355,360],2);
+R('enchanting','Enchant Chest - Exceptional Stats',1,{'Large Prismatic Shard':4,'Greater Planar Essence':4},[345,355,365,375],3,{src:'vendor',cost:400000,ri:'Formula: Enchant Chest - Exceptional Stats'});
+R('enchanting','Enchant Weapon - Mongoose',1,{'Large Prismatic Shard':6,'Greater Planar Essence':10,'Primal Air':2},[375,380,385,390],3,{src:'drop',ri:'Formula: Enchant Weapon - Mongoose'});
+R('enchanting','Enchant Weapon - Executioner',1,{'Void Crystal':4,'Large Prismatic Shard':6,'Primal Nether':1},[375,380,385,390],3,{src:'drop',ri:'Formula: Enchant Weapon - Executioner'});
+const ENCHANTS = ['Enchant Bracer - Minor Health','Enchant Bracer - Minor Stamina','Enchant Bracer - Lesser Strength','Enchant Cloak - Defense','Enchant Gloves - Greater Agility','Enchant Weapon - Crusader','Enchant Bracer - Assault','Enchant Chest - Exceptional Stats','Enchant Weapon - Mongoose','Enchant Weapon - Executioner'];
+
+// Prospecting (Jewelcrafting): 5 ore -> gems
+const PROSPECT = {
+  'Copper Ore':     {req:20,  s:[20,50,75,100], g:[['Malachite',.5],['Tigerseye',.5],['Shadowgem',.1]]},
+  'Tin Ore':        {req:50,  s:[50,100,125,150], g:[['Shadowgem',.38],['Moss Agate',.35],['Lesser Moonstone',.35],['Jade',.03],['Citrine',.03]]},
+  'Iron Ore':       {req:125, s:[125,150,175,200], g:[['Jade',.4],['Citrine',.35],['Lesser Moonstone',.3],['Aquamarine',.05],['Star Ruby',.05]]},
+  'Mithril Ore':    {req:175, s:[175,200,225,250], g:[['Aquamarine',.35],['Star Ruby',.35],['Citrine',.3],['Blue Sapphire',.03],['Large Opal',.03],['Huge Emerald',.03]]},
+  'Thorium Ore':    {req:250, s:[250,275,300,325], g:[['Star Ruby',.3],['Blue Sapphire',.25],['Large Opal',.25],['Huge Emerald',.2],['Azerothian Diamond',.2],['Arcane Crystal',.02]]},
+  'Fel Iron Ore':   {req:275, s:[275,300,325,350], g:[['Blood Garnet',.18],['Flame Spessarite',.18],['Golden Draenite',.18],['Deep Peridot',.18],['Azure Moonstone',.18],['Shadow Draenite',.18],['Living Ruby',.01],['Star of Elune',.01],['Dawnstone',.01],['Talasite',.01],['Noble Topaz',.01],['Nightseye',.01]]},
+  'Adamantite Ore': {req:325, s:[325,350,375,400], g:[['Adamantite Powder',1],['Blood Garnet',.18],['Flame Spessarite',.18],['Golden Draenite',.18],['Deep Peridot',.18],['Azure Moonstone',.18],['Shadow Draenite',.18],['Living Ruby',.035],['Star of Elune',.035],['Dawnstone',.035],['Talasite',.035],['Noble Topaz',.035],['Nightseye',.035]]},
+};
+// Disenchanting tiers (Enchanting)
+const DE = {
+  low:    {req:1,   s:[1,25,50,75],   r:[['Strange Dust',1,2,.75],['Lesser Magic Essence',1,2,.2],['Small Glimmering Shard',1,1,.05]]},
+  mid:    {req:125, s:[125,150,175,200], r:[['Soul Dust',1,2,.75],['Lesser Mystic Essence',1,2,.2],['Small Glowing Shard',1,1,.05]]},
+  high:   {req:225, s:[225,250,275,300], r:[['Illusion Dust',1,3,.75],['Greater Eternal Essence',1,2,.2],['Large Brilliant Shard',1,1,.05]]},
+  outland:{req:275, s:[275,300,325,350], r:[['Arcane Dust',1,3,.75],['Greater Planar Essence',1,2,.22],['Small Prismatic Shard',1,1,.03]]},
+  blue:   {req:300, s:[300,325,350,375], r:[['Large Prismatic Shard',1,1,.99],['Void Crystal',1,1,.01]]},
+  epic:   {req:300, s:[300,325,350,375], r:[['Void Crystal',1,2,1]]},
+};
+const MOTES = {'Mote of Fire':'Primal Fire','Mote of Earth':'Primal Earth','Mote of Water':'Primal Water','Mote of Air':'Primal Air','Mote of Life':'Primal Life','Mote of Mana':'Primal Mana','Mote of Shadow':'Primal Shadow'};
+
+// ---------- Riding ----------
+const RIDING = [
+  {n:'On foot', mult:1, icon:'inv_boots_05'},
+  {n:'Apprentice Riding', d:'Brown Horse — 60% speed', mult:1.3, cost:400000, icon:'Brown Horse Bridle'},
+  {n:'Journeyman Riding', d:'Swift Brown Steed — 100% speed', mult:1.6, cost:6000000, icon:'Swift Brown Steed'},
+  {n:'Expert Riding', d:'Gryphon — flying, 150% speed. Reach flying-only nodes.', mult:1.85, cost:8500000, icon:'ability_mount_gryphon_01', fly:1},
+  {n:'Artisan Riding', d:'Swift Purple Gryphon — epic flying, 280% speed', mult:2.4, cost:50000000, icon:'Swift Purple Gryphon', fly:1},
+];
+const MOUNT_ITEMS = {"Flying Machine Control":3, "Turbo-Charged Flying Machine Control":4, "Fiery Warhorse's Reins":2, "Reins of the Raven Lord":2, "Ashes of Al'ar":4};
+
+// ---------- Market base prices (copper). Anything else: vendor price x4 ----------
+const g=10000, s=100;
+const PRICES = {
+ 'Copper Ore':12*s/10,'Copper Bar':15,'Tin Ore':30,'Iron Ore':60,'Mithril Ore':1*s+50,'Thorium Ore':2*s+50,
+ 'Fel Iron Ore':60*s,'Adamantite Ore':1.2*g,'Eternium Ore':3*g,'Khorium Ore':7*g,'Nethercite Ore':2*g,
+ 'Fel Iron Bar':1.3*g,'Adamantite Bar':2.6*g,'Eternium Bar':6.5*g,'Felsteel Bar':22*g,'Khorium Bar':15*g,'Hardened Adamantite Bar':32*g,
+ 'Mote of Earth':1*g,'Mote of Fire':1.6*g,'Mote of Water':1.5*g,'Mote of Air':2*g,'Mote of Life':1.6*g,'Mote of Mana':1.2*g,'Mote of Shadow':2*g,
+ 'Primal Earth':11*g,'Primal Fire':17*g,'Primal Water':16*g,'Primal Air':22*g,'Primal Life':17*g,'Primal Mana':13*g,'Primal Shadow':22*g,'Primal Might':95*g,'Primal Nether':120*g,'Nether Vortex':250*g,
+ 'Felweed':70*s,'Dreaming Glory':80*s,'Ragveil':1*g,'Terocone':90*s,'Flame Cap':2*g,'Netherbloom':1.3*g,'Nightmare Vine':1.8*g,'Nightmare Seed':1*g,'Mana Thistle':3.5*g,'Fel Lotus':28*g,'Black Lotus':45*g,
+ 'Knothide Leather Scraps':25*s,'Knothide Leather':1.4*g,'Heavy Knothide Leather':8*g,'Thick Clefthoof Leather':5*g,'Fel Scales':1.5*g,'Wind Scales':1*g,'Nether Dragonscales':6*g,'Cobra Scales':9*g,
+ 'Netherweave Cloth':45*s,'Bolt of Netherweave':2.6*g,'Bolt of Imbued Netherweave':9*g,'Netherweb Spider Silk':4*g,'Primal Mooncloth':80*g,'Spellcloth':75*g,'Shadowcloth':65*g,
+ 'Blood Garnet':4*g,'Azure Moonstone':3*g,'Flame Spessarite':3*g,'Deep Peridot':2.5*g,'Golden Draenite':3.5*g,'Shadow Draenite':3*g,
+ 'Living Ruby':110*g,'Star of Elune':45*g,'Noble Topaz':40*g,'Talasite':30*g,'Dawnstone':60*g,'Nightseye':40*g,
+ 'Bold Blood Garnet':6*g,'Runed Blood Garnet':6*g,'Brilliant Golden Draenite':5*g,'Solid Azure Moonstone':4.5*g,'Bold Living Ruby':150*g,'Brilliant Dawnstone':85*g,
+ 'Adamantite Powder':1*g,'Mercurial Adamantite':8*g,'Earthstorm Diamond':55*g,'Skyfire Diamond':55*g,'Relentless Earthstorm Diamond':95*g,'Chaotic Skyfire Diamond':110*g,'Thick Felsteel Necklace':90*g,'Fel Iron Blood Ring':12*g,'Figurine - Living Ruby Serpent':260*g,
+ 'Arcane Dust':2.2*g,'Greater Planar Essence':7*g,'Small Prismatic Shard':4*g,'Large Prismatic Shard':14*g,'Void Crystal':25*g,
+ 'Super Healing Potion':2.5*g,'Super Mana Potion':3*g,'Elixir of Major Agility':4*g,'Destruction Potion':9*g,'Flask of Relentless Assault':45*g,'Flask of the Titans':35*g,'Volatile Healing Potion':1*g,
+ 'Lionheart Champion':2200*g,'Felsteel Longblade':450*g,'Ragesteel Breastplate':150*g,'Felsteel Gloves':40*g,'Adamantite Cleaver':18*g,'Adamantite Sharpening Stone':1.5*g,
+ 'Nethercobra Leg Armor':140*g,'Cobrahide Leg Armor':30*g,'Drums of Battle':30*g,'Thick Netherscale Breastplate':120*g,'Netherdrake Helm':80*g,'Knothide Armor Kit':1.5*g,
+ 'Spellfire Robe':700*g,'Primal Mooncloth Robe':800*g,'Frozen Shadoweave Robe':600*g,'Primal Mooncloth Bag':550*g,'Imbued Netherweave Bag':20*g,'Netherweave Bag':5*g,
+ 'Fel Iron Bomb':1.2*g,'Elemental Blasting Powder':2.5*g,'Adamantite Frame':30*g,'Khorium Power Core':60*g,'Felsteel Stabilizer':45*g,'Hardened Adamantite Tube':34*g,
+ 'Enchant Bracer - Minor Health':10*s,'Enchant Bracer - Minor Stamina':40*s,'Enchant Bracer - Lesser Strength':1.2*g,'Enchant Cloak - Defense':3*g,'Enchant Gloves - Greater Agility':15*g,'Enchant Weapon - Crusader':35*g,'Enchant Bracer - Assault':16*g,'Enchant Chest - Exceptional Stats':75*g,'Enchant Weapon - Mongoose':180*g,'Enchant Weapon - Executioner':150*g,'Superior Mana Oil':9*g,'Superior Wizard Oil':12*g,
+ 'Golden Darter':30*s,'Furious Crawdad':60*s,'Icefin Bluefish':40*s,'Zangarian Sporefish':25*s,'Barbed Gill Trout':40*s,'Spotted Feltail':40*s,'Huge Spotted Feltail':1*g,
+ 'Netherwing Egg':40*g,'Mr. Pinchy':0,
+};
+// Items that can't go on the Auction House (BoP / quest / mounts)
+const NOAH = new Set(['Flying Machine Control','Turbo-Charged Flying Machine Control',"Ashes of Al'ar","Fiery Warhorse's Reins",'Reins of the Raven Lord','Mr. Pinchy','Magical Crawdad Box','Murloc Costume','Lionheart Champion','Felsteel Longblade','Spellfire Robe','Primal Mooncloth Robe','Frozen Shadoweave Robe',"Stalker's War Bands",'Gloves of Saintly Blessings','Vambraces of Courage','Harbinger Bands','Worgen Claw Necklace','Spectral Band of Innervation','Royal Cloak of Arathi Kings','Krakken-Heart Breastplate','The Night Watchman','Nether Vortex','Netherwing Egg','Smokywood Pastures Gift Pack','Old Crafty','Old Ironjaw']);
+// Lionheart, Spellfire etc are BoP in TBC — sell to a "Trade chat buyer" via commissions only? Keep simple: vendor + guild bank.
+
+// ---------- Shattered Sun Offensive (Isle of Quel'Danas, patch 2.4) ----------
+const PHASES = [
+  {n:"Sun's Reach Sanctum", d:"Secure the Sanctum. Vindicator Xayann and the Shattered Sun need supplies.", need:{'Fel Iron Bar':120,'Netherweave Cloth':100,'Felweed':80,'Knothide Leather':40}, reward:'+5% gathering speed for the whole guild', buff:{gather:.05}},
+  {n:"Sun's Reach Armory", d:'Arm the Offensive. Smiths of Shattrath, to the anvils!', need:{'Adamantite Bar':100,'Heavy Knothide Leather':20,'Super Healing Potion':40,'Fel Iron Bomb':20}, reward:'Crafting is 15% faster', buff:{craft:.15}},
+  {n:"Sun's Reach Harbor", d:'Rebuild the harbor so the fleet can land.', need:{'Bolt of Netherweave':60,'Eternium Bar':20,'Mote of Water':40,'Golden Darter':40}, reward:'+5% gathering speed, +10% Trade chat tips', buff:{gather:.05,tips:.1}},
+  {n:'Alchemy Lab', d:'Ensure the Lab is staffed. The Sunwell must not fall to the Legion.', need:{'Netherbloom':80,'Nightmare Vine':60,'Primal Life':10,'Super Mana Potion':40}, reward:'Transmute & specialty cloth cooldowns 25% shorter', buff:{cd:.25}},
+  {n:'Anvil & Forge', d:"Light the forges. Felsteel for the Shattered Sun's champions.", need:{'Hardened Adamantite Bar':10,'Khorium Bar':30,'Felsteel Bar':20,'Primal Fire':10}, reward:'+5% chance for a bonus craft', buff:{proc:.05}},
+  {n:'Monument to the Fallen', d:'Honor those who fell retaking the Isle. The Sunwell Plateau looms.', need:{'Primal Might':5,'Large Prismatic Shard':20,'Living Ruby':3,'Nether Vortex':1}, reward:'Title "of the Shattered Sun", +10% to everything', buff:{gather:.1,craft:.1,tips:.1}},
+];
+const REP = [['Hated',-42000],['Neutral',0],['Friendly',3000],['Honored',9000],['Revered',21000],['Exalted',42000]];
+
+// ---------- Trade chat flavour ----------
+const NPCS = ['Lolretpala','Healzforgold','Stabbystab','Moonkinfire','Pewpewlazor','Shamwowz','Tankmeister','Legolasxx','Bubblehearth','Critsalot','Dotsndots','Feardotcom','Holyshocky','Totemtom','Huntardo','Sheepzor','Drainyouu','Brewmasterx','Elekkfan','Gnomercy','Mankrikk','Ironforgie','Shattbanker','Ninjaloot','Rerollpls'];
+const AMBIENT = [
+  ['General','Where is Mankrik\'s wife?? been looking for 3 hours'],
+  ['Trade','LF1M Kara need heals, 4/11 this week, PST'],
+  ['Trade','WTB [Primal Might] x2 pst'],
+  ['Trade','LF enchanter with [Enchant Weapon - Mongoose], tips!!'],
+  ['General','Chuck Norris can solo Kil\'jaeden. With a fishing pole.'],
+  ['Trade','LFM ZA timed run, need 1 tank who knows Nalorakk, 4 bears is the goal'],
+  ['General','anyone know where the netherwing eggs are? found 2 on the ledge'],
+  ['Trade','Did someone say [Thunderfury, Blessed Blade of the Windseeker]?'],
+  ['Trade','LF JC with Relentless Earthstorm cut, have mats'],
+  ['General','Is the Sunwell open yet? lol'],
+  ['Trade','LFG Heroic Magisters\' Terrace, 4.5k gs... wait wrong game'],
+  ['General','whats the fastest way to 375 mining, asking for a friend'],
+  ['Trade','WTS [Primal Mooncloth] cd every 4 days, pst'],
+  ['General','Brb mom says dinner is ready'],
+  ['General','Imagine an expansion where everyone is a death knight lol'],
+  ['Trade','LF transmuter for Primal Might, I have mats and a tip'],
+  ['General','Leeroy is my hero'],
+  ['General','the druid flying over my khorium node... I see you'],
+  ['Trade','WTS Anchient Lichen cheap!!!'],
+  ['General','who else waiting for patch 3.0 achievements lol'],
+];
+const TIPS = [
+  'Mr. Pinchy can be fished from Highland Mixed Schools in Terokkar Forest. Some say he grants wishes.',
+  'Primal Motes can be combined into Primals: ten motes make one Primal.',
+  'Transmutation Masters sometimes create extra Primal Might. Choose your Alchemy specialization wisely.',
+  'Prospecting Adamantite Ore can yield rare gems like the Living Ruby.',
+  'Flying mounts let you reach the Netherwing Ledge and the herbs of Skettis.',
+  'Druids in Flight Form are the natural enemy of every herbalist.',
+  'The Shattered Sun Offensive needs supplies to retake the Isle of Quel\'Danas.',
+  'Trade chat buyers pay more than the Auction House. Check their requests often.',
+  'Your guild bank is the fastest way to trade materials with your guildmates.',
+  'Report Spam was added in patch 2.4. Gold sellers beware.',
+  'Hardened Adamantite Bars are made from ten Adamantite Bars. Patience, miner.',
+  'Engineers can build their own flying machines. Goblins say they rarely explode.',
+];
+const GOLDSELLER = ['WWW.G0LDKINGDOM.C0M — 1000G ONLY $9.99!! FAST DELIVERY <3','BUY GOLD CHEAP!! power leveling 1-70 in 3 days WWW.WOWG0LD4U.C0M','Dear friend!! wow gold 5% off today only, website: GOLDBANK*COM, code SUNWELL'];
+
+'use strict';
+// ======================================================================
+//  SHATTRATH TRADE — an Outland professions idle game (fan-made)
+// ======================================================================
+const $ = s => document.querySelector(s);
+const H = 3600e3, MIN = 60e3, CAP_OFFLINE = 24 * H;
+const VERSION = 1;
+const now = () => Date.now();
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rnd = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function hashStr(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function rng32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const slug = s => String(s).toLowerCase().replace(/[^a-z0-9]/g, '');
+function fmtDur(ms){ms=Math.max(0,ms);const s=Math.floor(ms/1e3),d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60),x=s%60;
+  if(d) return `${d}d ${h}h`; if(h) return `${h}h ${m}m`; if(m) return `${m}m ${x}s`; return `${x}s`;}
+
+// ---------- Items ----------
+const IT = ITEMS; // name -> {q,i,s,il,sl,boe,v}
+const I = n => IT[n] || {q:1, i:null, s:0};
+const iconId = x => (IT[x] ? IT[x].i : x);
+const ICON_URL = i => `https://wow.zamimg.com/images/wow/icons/large/${i}.jpg`;
+function initials(x){const w=String(x).replace(/^(inv|spell|trade|ability)_/,'').split(/[\s_\-:]+/).filter(Boolean);return (w[0]?.[0]||'?').toUpperCase()+(w[1]?.[0]||'').toUpperCase();}
+function ic(x, o = {}){
+  const it = IT[x], icon = iconId(x), q = o.q ?? (it ? it.q : 1);
+  const cls = ['ic', 'q'+q, o.size ? 's'+o.size : '', o.dim ? 'dim' : '', o.cls||''].join(' ');
+  const data = it && !o.noTip ? ` data-n="${esc(x)}"` : '';
+  const ct = o.ct != null && o.ct !== 1 ? `<span class="ct">${o.ct >= 10000 ? Math.floor(o.ct/1000)+'k' : o.ct}</span>` : '';
+  return `<span class="${cls}" data-l="${esc(initials(it ? x : icon || '?'))}"${data}${o.attrs||''}>${icon ? `<img src="${ICON_URL(icon)}" alt="" loading="lazy" onerror="this.remove()">` : ''}${ct}</span>`;
+}
+const ilink = n => `<a class="ilink link tq${I(n).q}" data-a="item" data-n="${esc(n)}">[${esc(n)}]</a>`;
+function money(c){
+  c = Math.floor(c || 0); const neg = c < 0; c = Math.abs(c);
+  const g = Math.floor(c/1e4), s = Math.floor(c%1e4/100), cc = c%100; let h = '';
+  if (g) h += `${g.toLocaleString('en-US')}<i class="cg"></i>`;
+  if (s || (g && cc)) h += `${s}<i class="cs"></i>`;
+  if (cc || !h) h += `${cc}<i class="cc"></i>`;
+  return `<span class="money">${neg ? '-' : ''}${h}</span>`;
+}
+
+// ---------- Recipes ----------
+for (const [ore, p] of Object.entries(PROSPECT))
+  RECIPES.push({p:'jewelcrafting', o:'Prospecting: ' + ore, icon:'inv_misc_gem_bloodgem_01', pros:ore, q:0, m:{[ore]:5}, s:p.s, t:2});
+RECIPES.forEach(r => { r.id = r.p + ':' + r.o; });
+const RBYID = Object.fromEntries(RECIPES.map(r => [r.id, r]));
+const RBYITEM = {}; RECIPES.forEach(r => { if (r.ri) RBYITEM[r.ri] = r; });
+const ALLSPOTS = {}; for (const [k, list] of Object.entries(SPOTS)) list.forEach(s => { s.k = k; s.t = Math.round(s.t * (k === 'combat' ? 1.5 : 1.8)); if (s.coin) s.coin = s.coin.map(c => Math.round(c * .6)); ALLSPOTS[k + ':' + s.id] = s; });
+const DIFF = ['optimal (orange)', 'medium (yellow)', 'easy (green)', 'trivial (gray)'];
+const diff = (s, a) => s < a[1] ? 0 : s < a[2] ? 1 : s < a[3] ? 2 : 3;
+const gArr = req => [req, req + 25, req + 50, req + 100];
+
+// ---------- Globals ----------
+let ST = null;          // player state
+let G = {members:{}, bank:{}, project:{phase:0, got:{}}, market:{}};
+let NET = null, VIEW = 'gather', SUB = {}, SEL = {}, SESSION = {}, DIRTY = true, LAST_RENDER = 0, MURLOC_UNTIL = 0;
+let PID = '', GUILD = '', GUILDNAME = '', MYSID = '', LOCKED = false;
+
+function newState(name){
+  return {v:VERSION, name, created:now(), t:now(), gold:10*1e4, profs:{}, inv:{'Hearthstone':1}, act:null, q:[], cs:0, cn:0, cq:null,
+    cds:{}, riding:0, known:{}, spec:{}, st:{gathers:0,crafts:0,sold:0,prospects:0,de:0,comms:0,ninja:0,gank:0,dep:0,booms:0,earned:0,rares:0,procs:0,kills:0,hogger:0,crash:0},
+    made:{}, found:{}, ach:{}, rep:0, keys:{}, comm:[], commSlot:0, buffs:{}, flags:{}, played:0, title:''};
+}
+
+// ---------- Guild buffs ----------
+function guildBuff(k){ let v = 0; const ph = G.project?.phase || 0; for (let i = 0; i < ph && i < PHASES.length; i++) v += PHASES[i].buff[k] || 0; return v; }
+function mountTier(st){ let t = st.riding; for (const [n, tier] of Object.entries(MOUNT_ITEMS)) if (st.inv[n] > 0) t = Math.max(t, tier); return t; }
+const canFly = st => mountTier(st) >= 3;
+function speedMult(st, t){ let m = RIDING[mountTier(st)].mult; let b = 1 + guildBuff('gather'); if ((st.buffs.pinchy || 0) > t) b += .25; return m * b; }
+const gatherDur = (st, sp, t) => sp.t * 1000 / speedMult(st, t);
+const craftDur = r => r.t * 1000 / (1 + guildBuff('craft'));
+function rankOf(m){ return RANKS.findIndex(r => r.max === m); }
+function isDarkmoon(d = new Date()){ return d.getDate() <= 7; }
+
+// ---------- Recipe helpers ----------
+function knows(st, r){
+  const pr = st.profs[r.p]; if (!pr) return false;
+  if (r.src) return !!st.known[r.id];
+  return pr.s >= r.s[0];
+}
+function cdLeft(st, r, t){ return r.cdk ? Math.max(0, (st.cds[r.cdk] || 0) - t) : 0; }
+function maxCraft(st, r){ let n = Infinity; for (const [m, q] of Object.entries(r.m)) n = Math.min(n, Math.floor((st.inv[m] || 0) / q)); return n; }
+function canCraft(st, r, t){ return knows(st, r) && maxCraft(st, r) > 0 && !cdLeft(st, r, t); }
+function spotOk(st, sp){
+  if (sp.k === 'combat') return sp.key ? !!st.keys[sp.key] : true;
+  const pr = st.profs[sp.k]; if (!pr || pr.s < sp.req) return false;
+  if (sp.flying && !canFly(st)) return false; return true;
+}
+
+// ---------- Engine ----------
+function newOut(live){ return {live, items:{}, gold:0, skill:{}, made:{}, notable:[], ev:{gank:0,ninja:0,rich:0,boom:0,procs:0,hogger:0}, msgs:[]}; }
+function msg(out, cls, html, key){ if (out.live) chat(cls, html, key); }
+function give(st, n, q, out){
+  if (q <= 0) return; st.inv[n] = (st.inv[n] || 0) + q; out.items[n] = (out.items[n] || 0) + q;
+  st.found[n] = (st.found[n] || 0) + q;
+  if (isNotable(n)) { out.notable.push(n); st.st.rares++; }
+  if (out.live) SESSION[n] = (SESSION[n] || 0) + q;
+}
+function take(st, n, q){ st.inv[n] = (st.inv[n] || 0) - q; if (st.inv[n] <= 0) delete st.inv[n]; }
+const NOTABLE = new Set(['Black Lotus','Fel Lotus','Netherwing Egg','Mr. Pinchy','Old Crafty','Old Ironjaw','Primal Nether','Nether Vortex','Khorium Ore','Arcane Crystal']);
+const RAIDWARN = new Set(['Black Lotus','Mr. Pinchy',"Ashes of Al'ar","Fiery Warhorse's Reins",'Reins of the Raven Lord','Plans: Lionheart Champion','Old Crafty','Old Ironjaw','Netherwing Egg','Formula: Enchant Weapon - Mongoose']);
+function isNotable(n){ return NOTABLE.has(n) || I(n).q >= 3 || RBYITEM[n] || MOUNT_ITEMS[n]; }
+
+function skillUp(st, p, arr, out){
+  const pr = st.profs[p]; if (!pr || pr.s >= pr.m) return;
+  const d = diff(pr.s, arr); if (d === 3) return;
+  const ch = d === 0 ? 1 : (arr[3] - pr.s) / (arr[3] - arr[1]) * (PROFS[p].kind === 'gather' ? .7 : 1);
+  if (Math.random() < ch) { pr.s++; out.skill[p] = pr.s; msg(out, 'c-skill', `Your skill in ${PROFS[p].n} has increased to ${pr.s}.`); }
+}
+
+function doGather(st, t, out){
+  const a = st.act, sp = ALLSPOTS[a.k + ':' + a.id]; if (!sp) { st.act = null; return 0; }
+  st.st.gathers++;
+  if (a.k === 'combat') return doCombat(st, sp, t, out);
+  const r = Math.random();
+  if (sp.outland && r < .01) {
+    st.st.gank++; out.ev.gank++;
+    msg(out, 'c-sys', `You have been slain by <span class="c-yell">${pick(['Stabbystab','Ganklord','Shadowmeldz','Rogueishard'])}</span> (Rogue, level ??). You release your spirit and run back from the graveyard.`);
+    return 45e3;
+  }
+  if (a.k === 'herbalism' && sp.outland && r < .06) {
+    st.st.ninja++; out.ev.ninja++;
+    msg(out, 'c-emote', `A druid in Flight Form swoops down and snatches the ${sp.n} right in front of you!`);
+    return 0;
+  }
+  const rich = a.k === 'mining' && r > .92;
+  if (rich) { out.ev.rich++; msg(out, 'c-sys', `Rich ${sp.n.replace(/(Vein|Deposit)/, '$1')}! Double yield.`); }
+  if (sp.z === 'Elwynn Forest' && Math.random() < .0008) {
+    st.st.hogger++; out.ev.hogger++; st.gold += 250; out.gold += 250;
+    msg(out, 'c-yell', 'Hogger yells: Grrr... fresh meat! <span class="c-sys">You help the Stormwind guards drive Hogger back into the woods.</span>');
+  }
+  skillUp(st, a.k, gArr(sp.req), out);
+  sp.drops.forEach(([n, mn, mx, c], i) => { if (Math.random() < c) { let q = rnd(mn, mx); if (rich && i === 0) q *= 2; give(st, n, q, out); lootMsg(out, n, q); } });
+  return 0;
+}
+function lootMsg(out, n, q){ if (out.live) chat('c-loot', `You receive loot: ${ilink(n)}${q > 1 ? 'x' + q : ''}.`, 'loot:' + n); if (out.live && RAIDWARN.has(n)) raidWarn(`${n}!`); }
+function doCombat(st, sp, t, out){
+  st.st.kills++;
+  const c = rnd(sp.coin[0], sp.coin[1]); st.gold += c; out.gold += c; st.st.earned += c;
+  sp.drops.forEach(([n, mn, mx, ch]) => { if (Math.random() < ch) { const q = rnd(mn, mx); give(st, n, q, out); lootMsg(out, n, q); } });
+  if (Math.random() < (sp.gc || 0)) { const n = pick(GREENS[sp.green]); give(st, n, 1, out); lootMsg(out, n, 1); }
+  if (Math.random() < (sp.bc || 0)) { const n = pick(GREENS.blue); give(st, n, 1, out); lootMsg(out, n, 1); }
+  if (Math.random() < (sp.ec || 0)) { const n = pick(sp.epics || GREENS.epic); give(st, n, 1, out); lootMsg(out, n, 1); }
+  (sp.recipes || []).forEach(([n, ch]) => { if (Math.random() < ch) { give(st, n, 1, out); lootMsg(out, n, 1); } });
+  return 0;
+}
+
+function tryStartCraft(st, t, out){
+  if (st.cs) return;
+  for (const e of st.q) {
+    const r = RBYID[e.id]; if (!r) continue;
+    if (canCraft(st, r, t)) {
+      st.cs = t; st.cn = t + craftDur(r); st.cq = r.id;
+      if (r.cdk) st.cds[r.cdk] = t + r.cd * H * (1 - guildBuff('cd'));
+      return;
+    }
+  }
+}
+function completeCraft(st, t, out){
+  const r = RBYID[st.cq]; st.cs = 0; const e = st.q.find(x => x.id === st.cq); st.cq = null;
+  if (!r) return;
+  if (maxCraft(st, r) < 1) return;
+  for (const [m, q] of Object.entries(r.m)) take(st, m, q);
+  if (e && e.n > 0) { e.n--; if (e.n === 0) st.q.splice(st.q.indexOf(e), 1); }
+  st.st.crafts++;
+  if (r.boom && Math.random() < .03) {
+    st.st.booms++; out.ev.boom++;
+    msg(out, 'c-emote', `The ${r.o} explodes in your face! Your eyebrows will grow back. Eventually.`);
+    skillUp(st, r.p, r.s, out); return;
+  }
+  if (r.pros) {
+    st.st.prospects++;
+    const tab = PROSPECT[r.pros].g; let got = 0;
+    for (const [n, ch] of tab) if (Math.random() < ch) { const q = n === 'Adamantite Powder' ? rnd(1, 2) : 1; give(st, n, q, out); if (n !== 'Adamantite Powder') got++; lootMsg(out, n, q); }
+    if (!got) { const tot = tab.reduce((a, b) => a + (b[0] === 'Adamantite Powder' ? 0 : b[1]), 0); let x = Math.random() * tot; for (const [n, ch] of tab) { if (n === 'Adamantite Powder') continue; x -= ch; if (x <= 0) { give(st, n, 1, out); lootMsg(out, n, 1); break; } } }
+  } else {
+    let q = r.q;
+    if (r.spec && st.spec[r.p] === r.spec && Math.random() < .15) {
+      const extra = 1 + (Math.random() < .25 ? 1 : 0) + (Math.random() < .08 ? 2 : 0); q += extra; st.st.procs++; out.ev.procs++;
+      msg(out, 'c-sys', `Your ${SPECS[r.spec].n} mastery creates ${extra} extra ${ilink(r.o)}!`);
+      if (r.spec === 'transmute') st.flags.tproc = 1;
+    }
+    if (Math.random() < guildBuff('proc')) { q++; msg(out, 'c-sys', `The Anvil of the Shattered Sun blesses your work: +1 ${ilink(r.o)}.`); }
+    give(st, r.o, q, out); st.made[r.o] = (st.made[r.o] || 0) + q; out.made[r.o] = (out.made[r.o] || 0) + q;
+    if (out.live) chat('c-craft', `You create: ${ilink(r.o)}${q > 1 ? 'x' + q : ''}.`, 'craft:' + r.o);
+    if (out.live && I(r.o).q >= 4) raidWarn(`${r.o} crafted!`);
+  }
+  skillUp(st, r.p, r.s, out);
+}
+const SPECS = {transmute:{n:'Transmutation', d:'15% chance to create extra Primal Might, diamonds and other transmutes.'}, elixir:{n:'Elixir', d:'15% chance to create extra elixirs and flasks.'}, potion:{n:'Potion', d:'15% chance to create extra potions.'}};
+
+function advance(st, until, out){
+  let t = st.t;
+  if (until - t > CAP_OFFLINE) {
+    t = until - CAP_OFFLINE;
+    if (st.act && st.act.nx < t) { st.act.s0 = t; st.act.nx = t + 1000; }
+    if (st.cs && st.cn < t) st.cn = t;
+  }
+  let guard = 0;
+  while (guard++ < 400000) {
+    const tg = st.act ? st.act.nx : Infinity, tc = st.cs ? st.cn : Infinity, nt = Math.min(tg, tc);
+    if (nt > until) break;
+    if (tc <= tg) { completeCraft(st, tc, out); tryStartCraft(st, tc, out); }
+    else {
+      const pen = doGather(st, tg, out);
+      if (st.act) { const sp = ALLSPOTS[st.act.k + ':' + st.act.id]; st.act.s0 = tg; st.act.nx = tg + pen + gatherDur(st, sp, tg); }
+      if (!st.cs) tryStartCraft(st, tg, out);
+    }
+  }
+  if (!st.cs) tryStartCraft(st, until, out);
+  st.t = until;
+  genComms(st, until, out.live);
+}
+
+// ---------- Trade chat commissions ----------
+const SLOT = 40 * MIN;
+function commPool(st){
+  const pool = new Set();
+  for (const sp of Object.values(ALLSPOTS)) if (sp.k !== 'combat' && spotOk(st, sp)) pool.add(sp.drops[0][0]);
+  for (const r of RECIPES) if (!r.pros && knows(st, r) && !NOAH.has(r.o) && !r.mount) pool.add(r.o);
+  if (!pool.size) ['Linen Cloth','Copper Ore','Peacebloom','Light Leather','Netherweave Cloth'].forEach(n => pool.add(n));
+  return [...pool];
+}
+function genComms(st, until, live){
+  st.comm = st.comm.filter(c => c.exp > until);
+  const cur = Math.floor(until / SLOT); const from = Math.max((st.commSlot || 0) + 1, cur - 12);
+  for (let k = from; k <= cur; k++) {
+    const R_ = rng32(hashStr(st.name + ':' + k));
+    if (R_() > .72 || st.comm.length >= 4) continue;
+    const pool = commPool(st); const item = pool[Math.floor(R_() * pool.length)];
+    const base = basePrice(item); if (!base) continue;
+    const target = (8 + R_() * 70) * 1e4 * (base > 30e4 ? 3 : 1);
+    const qty = clamp(Math.round(target / base), 1, 60);
+    const pay = Math.round(qty * base * (1.6 + R_() * 1.1) * (1 + guildBuff('tips')));
+    const who = NPCS[Math.floor(R_() * NPCS.length)];
+    const tpl = Math.floor(R_() * 4);
+    const c = {id:k, who, item, qty, pay, exp:k * SLOT + 10 * H, tpl};
+    if (c.exp <= until) continue;
+    st.comm.push(c);
+    if (live) chat('c-trade', `[2. Trade] [${who}]: ${commText(c)}`, null, `<button class="btn sm" data-a="fulfill" data-id="${k}">Sell</button>`);
+  }
+  st.commSlot = cur;
+}
+function commText(c){
+  const L = `${ilink(c.item)}${c.qty > 1 ? 'x' + c.qty : ''}`;
+  return [`WTB ${L}, paying ${money(c.pay)} total, PST!`, `LF someone to supply ${L} — tipping ${money(c.pay)}`, `Need ${L} for raid tonight, ${money(c.pay)} on the table`, `anyone selling ${L}? ${money(c.pay)}, mail me plz`][c.tpl];
+}
+
+// ---------- Market (shared between guildmates) ----------
+function basePrice(n){
+  if (PRICES[n] != null) return PRICES[n];
+  const it = I(n); if (!it) return 0;
+  if (it.sl) return Math.round(it.s * 1.5);
+  return Math.max(5, it.s * 4);
+}
+const tradeable = n => !NOAH.has(n) && !RBYITEM[n] && n !== 'Hearthstone' && basePrice(n) > 0 && I(n).q < 5;
+const liq = n => 3e6 / (basePrice(n) + 2e4) + 4;
+function wave(n, t){ const h = hashStr(n); return 1 + .12 * Math.sin(2 * Math.PI * t / (26 * H) + (h % 628) / 100) + .06 * Math.sin(2 * Math.PI * t / (7.3 * H) + (h % 314) / 50); }
+function pressure(n, t){ const m = G.market[mkey(n)]; if (!m) return 0; return m.p * Math.pow(.5, (t - m.t) / (8 * H)); }
+const mkey = n => encodeURIComponent(n).replace(/\./g, '%2E');
+function unitPrice(n, t = now()){ return basePrice(n) * wave(n, t) * Math.exp(-pressure(n, t)); }
+function sellValue(n, q, t = now()){ const L = liq(n), u = unitPrice(n, t); return Math.floor(u * (1 - Math.exp(-q / L)) / (1 - Math.exp(-1 / L)) * .95 * (isDarkmoon() ? 1.1 : 1)); }
+function buyCost(n, q, t = now()){ const L = liq(n), u = unitPrice(n, t) * 1.05; return Math.ceil(u * (Math.exp(q / L) - 1) / (Math.exp(1 / L) - 1)); }
+function trend(n){ const t = now(), a = unitPrice(n, t), b = basePrice(n) * wave(n, t - H) * Math.exp(-pressure(n, t - H)); return a > b * 1.005 ? 1 : a < b * .995 ? -1 : 0; }
+
+// ---------- Networking: local (solo) + Firebase (co-op) ----------
+function fhash(pin){ return 'h' + hashStr('shattrath:' + pin + ':sunwell').toString(36) + hashStr(pin + 'kael').toString(36); }
+class LocalNet {
+  constructor(){ this.mode = 'local'; this.L = {}; try { this.db = JSON.parse(localStorage.getItem('shattrath_local') || 'null'); } catch(e) {} this.db = this.db || {saves:{}, members:{}, bank:{}, market:{}, project:{phase:0, got:{}}, chat:[]}; }
+  persist(){ try { localStorage.setItem('shattrath_local', JSON.stringify(this.db)); } catch(e) {} }
+  emit(k){ (this.L[k] || []).forEach(cb => cb(k === 'chat' ? null : this.db[k])); }
+  on(k, cb){ (this.L[k] = this.L[k] || []).push(cb); if (k !== 'chat') cb(this.db[k]); }
+  async init(){}
+  async login(g, name, pin){ const v = this.db.saves[slug(name)]; if (!v) return null; if (v.pin && v.pin !== fhash(pin)) throw new Error('Wrong PIN for this character.'); return JSON.parse(v.save); }
+  async save(st, sum, pin){ this.db.saves[PID] = {save:JSON.stringify(st), pin:fhash(pin)}; this.db.members[PID] = sum; this.persist(); this.emit('members'); }
+  async claim(){} onSession(){}
+  async bankTx(n, d){ const k = mkey(n), v = (this.db.bank[k] || 0) + d; if (v < 0) return false; if (v) this.db.bank[k] = v; else delete this.db.bank[k]; this.persist(); this.emit('bank'); return true; }
+  async market(n, dp){ const k = mkey(n), t = now(); const p = clamp(pressure(n, t) + dp, -3, 6); this.db.market[k] = {p, t}; this.persist(); this.emit('market'); }
+  async project(n, q){ const res = applyProject(this.db.project, n, q); this.persist(); this.emit('project'); return res; }
+  async chat(m){ m.ts = now(); this.db.chat.push(m); this.db.chat = this.db.chat.slice(-60); this.persist(); (this.L.chatAdd || []).forEach(cb => cb(m)); }
+  onChat(cb){ (this.L.chatAdd = this.L.chatAdd || []).push(cb); this.db.chat.forEach(cb); }
+}
+function applyProject(cur, n, q){
+  cur.got = cur.got || {}; const ph = PHASES[cur.phase || 0]; if (!ph) return 0;
+  const need = ph.need[n] || 0, k = mkey(n), got = cur.got[k] || 0, acc = Math.max(0, Math.min(q, need - got));
+  if (!acc) return 0; cur.got[k] = got + acc;
+  if (Object.entries(ph.need).every(([x, v]) => (cur.got[mkey(x)] || 0) >= v)) { cur.done = cur.done || {}; cur.done[cur.phase || 0] = now(); cur.phase = (cur.phase || 0) + 1; cur.got = {}; }
+  return acc;
+}
+class FireNet {
+  constructor(cfg){ this.mode = 'firebase'; this.cfg = cfg; }
+  async init(){
+    const V = '10.12.2';
+    const A = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-app.js`);
+    this.D = await import(`https://www.gstatic.com/firebasejs/${V}/firebase-database.js`);
+    this.app = A.initializeApp(this.cfg); this.db = this.D.getDatabase(this.app);
+  }
+  r(p){ return this.D.ref(this.db, p ? `guilds/${GUILD}/${p}` : `guilds/${GUILD}`); }
+  async login(g, name, pin){ const s = await this.D.get(this.r('saves/' + slug(name))); if (!s.exists()) return null; const v = s.val(); if (v.pin && v.pin !== fhash(pin)) throw new Error('Wrong PIN for this character.'); return v.save ? JSON.parse(v.save) : null; }
+  async save(st, sum, pin){ await this.D.update(this.r(''), {[`saves/${PID}/save`]:JSON.stringify(st), [`saves/${PID}/pin`]:fhash(pin), [`members/${PID}`]:sum}); }
+  async claim(sid){ await this.D.set(this.r(`saves/${PID}/sid`), sid); }
+  onSession(cb){ this.D.onValue(this.r(`saves/${PID}/sid`), s => cb(s.val())); }
+  on(k, cb){ this.D.onValue(this.r(k), s => cb(s.val() || (k === 'project' ? {phase:0, got:{}} : {}))); }
+  async bankTx(n, d){ const res = await this.D.runTransaction(this.r('bank/' + mkey(n)), cur => { const v = (cur || 0) + d; if (v < 0) return; return v || null; }); return res.committed; }
+  async market(n, dp){ const t = now(); await this.D.runTransaction(this.r('market/' + mkey(n)), cur => { const p0 = cur ? cur.p * Math.pow(.5, (t - cur.t) / (8 * H)) : 0; return {p:clamp(p0 + dp, -3, 6), t}; }); }
+  async project(n, q){ let acc = 0; await this.D.runTransaction(this.r('project'), cur => { cur = cur || {phase:0, got:{}}; acc = applyProject(cur, n, q); return cur; }); return acc; }
+  async chat(m){ m.ts = now(); await this.D.push(this.r('chat'), m); }
+  onChat(cb){ this.D.onChildAdded(this.D.query(this.r('chat'), this.D.limitToLast(40)), s => cb(s.val())); }
+}
+
+// ---------- Chat ----------
+const CHAT = [];
+function chat(cls, html, key, extra){
+  const box = $('#msgs'); if (!box) return;
+  const last = box.lastElementChild;
+  if (key && last && last.dataset.key === key) { const n = (+last.dataset.n || 1) + 1; last.dataset.n = n; let x = last.querySelector('.x2'); if (!x) { x = document.createElement('span'); x.className = 'x2'; last.appendChild(x); } x.textContent = ` (x${n})`; return; }
+  const d = document.createElement('div'); d.className = cls; if (key) d.dataset.key = key;
+  d.innerHTML = html + (extra ? ' ' + extra : '');
+  const atBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 40;
+  box.appendChild(d); while (box.children.length > 150) box.firstChild.remove();
+  if (atBottom) box.scrollTop = box.scrollHeight;
+}
+function guildMsg(m){
+  const mine = m.pid === PID;
+  if (m.type === 'say') chat('c-guild', `[Guild] [<span class="link" data-a="who" data-pid="${esc(m.pid)}">${esc(m.name)}</span>]: ${linkify(esc(m.txt))}`);
+  else if (m.type === 'ach') chat('c-ach', `${mine ? 'You have' : '[' + esc(m.name) + '] has'} earned the achievement <span class="link" data-a="feats">[${esc(m.txt)}]</span>!`);
+  else if (m.type === 'loot' && !mine) chat('c-guild', `[Guild] ${esc(m.name)} has found ${ilink(m.txt)}!`);
+  else if (m.type === 'sys') chat('c-sys', esc(m.txt));
+  else if (m.type === 'phase') { chat('c-raid', `[Shattered Sun Offensive] ${esc(m.txt)}`); if (!mine) raidWarn(m.txt); }
+}
+function linkify(s){ return s.replace(/\[([^\]]{2,60})\]/g, (a, n) => IT[n] ? ilink(n) : a); }
+function raidWarn(t){ const el = $('#raidwarn'); el.textContent = t; el.classList.remove('on'); void el.offsetWidth; el.classList.add('on'); }
+const TQ = []; let TBUSY = false;
+function toast(html, ms = 4500){ TQ.push([html, ms]); if (!TBUSY) nextToast(); }
+function nextToast(){ const x = TQ.shift(); if (!x) { TBUSY = false; return; } TBUSY = true; const d = document.createElement('div'); d.innerHTML = x[0]; const el = d.firstElementChild; $('#toasts').appendChild(el); const ms = TQ.length > 2 ? 1700 : Math.min(x[1], 3800); setTimeout(() => el.remove(), ms); setTimeout(nextToast, ms - 300); }
+
+// ---------- Achievements ----------
+const NOUN = {mining:'Miner',herbalism:'Herbalist',skinning:'Skinner',blacksmithing:'Blacksmith',alchemy:'Alchemist',jewelcrafting:'Jewelcrafter',engineering:'Engineer',leatherworking:'Leatherworker',tailoring:'Tailor',enchanting:'Enchanter',fishing:'Angler'};
+const sk = (st, p) => st.profs[p]?.s || 0;
+const ACH = [
+  {id:'ahead', c:'General', n:'Ahead of Its Time', d:'Earn an achievement. In patch 2.4.3. Achievements arrive with Wrath of the Lich King, but who is counting?', i:'inv_misc_pocketwatch_01', f:st => Object.keys(st.ach).length > 0},
+  {id:'first', c:'General', n:'Rock and Stone', d:'Gather your very first resource node.', i:'Copper Ore', f:st => st.st.gathers > 0},
+  {id:'learn2', c:'General', n:'Two Professions, One Life', d:'Learn two primary professions.', i:'inv_misc_book_09', f:st => PRIMARY.filter(p => st.profs[p]).length >= 2},
+  ...Object.keys(PROFS).flatMap(p => [
+    {id:'a300' + p, c:'Professions', n:'Artisan ' + NOUN[p], d:`Reach 300 skill in ${PROFS[p].n}.`, i:PROFS[p].icon, f:st => sk(st, p) >= 300},
+    {id:'a375' + p, c:'Professions', n:'Master ' + NOUN[p], d:`Reach 375 skill in ${PROFS[p].n}.`, i:PROFS[p].icon, f:st => sk(st, p) >= 375, title: p === 'fishing' ? 'Salty' : null},
+  ]),
+  {id:'dual', c:'Professions', n:'Double Mastery', d:'Reach 375 in two primary professions.', i:'inv_misc_book_11', f:st => PRIMARY.filter(p => sk(st, p) >= 375).length >= 2, pts:25},
+  {id:'blacklotus', c:'Gathering', n:'The Black Lotus', d:'Find a Black Lotus in Winterspring. Every raid leader in the realm is now your friend.', i:'Black Lotus', f:st => st.found['Black Lotus']},
+  {id:'fellotus', c:'Gathering', n:'Lotus of the Fel', d:'Find a Fel Lotus while gathering herbs in Outland.', i:'Fel Lotus', f:st => st.found['Fel Lotus']},
+  {id:'khorium', c:'Gathering', n:'Khorium!', d:'Mine your first Khorium Ore in Netherstorm.', i:'Khorium Ore', f:st => st.found['Khorium Ore']},
+  {id:'egg', c:'Gathering', n:'Egg Hunter', d:'Find a Netherwing Egg on the Netherwing Ledge.', i:'Netherwing Egg', f:st => st.found['Netherwing Egg']},
+  {id:'motes', c:'Gathering', n:'Primal Power', d:'Combine ten motes into a Primal.', i:'Primal Fire', f:st => st.flags.combined},
+  {id:'g1000', c:'Gathering', n:'Strip Miner', d:'Gather 1,000 nodes.', i:'inv_pick_02', f:st => st.st.gathers >= 1000},
+  {id:'g5000', c:'Gathering', n:'Outland Has Been Strip Mined', d:'Gather 5,000 nodes.', i:'inv_pick_03', f:st => st.st.gathers >= 5000, pts:25},
+  {id:'ganked', c:'World PvP', n:'Welcome to Hellfire', d:'Get ganked by a level ?? rogue while gathering.', i:'ability_stealth', f:st => st.st.gank > 0},
+  {id:'ninja10', c:'World PvP', n:'Druid Ninja\'d', d:'Have 10 herb nodes stolen by druids in Flight Form.', i:'inv_feather_05', f:st => st.st.ninja >= 10},
+  {id:'hogger', c:'World PvP', n:'Hogger Raid', d:'Help drive Hogger out of Elwynn Forest.', i:'inv_misc_monsterhead_01', f:st => st.st.hogger > 0, hidden:1},
+  {id:'prospect100', c:'Crafting', n:'Prospector', d:'Prospect 100 times.', i:'inv_misc_gem_bloodgem_01', f:st => st.st.prospects >= 100},
+  {id:'rare', c:'Crafting', n:'Something Shiny', d:'Obtain a rare gem: Living Ruby, Star of Elune, Dawnstone, Talasite, Noble Topaz or Nightseye.', i:'Living Ruby', f:st => ['Living Ruby','Star of Elune','Dawnstone','Talasite','Noble Topaz','Nightseye'].some(n => st.found[n])},
+  {id:'might', c:'Crafting', n:'Primal Might', d:'Transmute your first Primal Might.', i:'Primal Might', f:st => st.made['Primal Might']},
+  {id:'tproc', c:'Crafting', n:'Master Transmuter', d:'Get a Transmutation Mastery proc.', i:'trade_alchemy', f:st => st.flags.tproc},
+  {id:'mooncloth', c:'Crafting', n:'Specialty Cloth', d:'Weave Primal Mooncloth, Spellcloth or Shadowcloth.', i:'Primal Mooncloth', f:st => st.made['Primal Mooncloth'] || st.made['Spellcloth'] || st.made['Shadowcloth']},
+  {id:'lionheart', c:'Crafting', n:'The Lionheart', d:'Forge a Lionheart Champion.', i:'Lionheart Champion', f:st => st.made['Lionheart Champion'], pts:50},
+  {id:'turbo', c:'Crafting', n:'Turbo-Charged', d:'Build a Turbo-Charged Flying Machine.', i:'Turbo-Charged Flying Machine Control', f:st => st.made['Turbo-Charged Flying Machine Control'], pts:25},
+  {id:'mongoose', c:'Crafting', n:'Mongoose!', d:'Craft Enchant Weapon - Mongoose. Every rogue in Shattrath wants you.', i:'Formula: Enchant Weapon - Mongoose', f:st => st.made['Enchant Weapon - Mongoose']},
+  {id:'robe', c:'Crafting', n:'Dressed for Karazhan', d:'Tailor a Spellfire Robe, Primal Mooncloth Robe or Frozen Shadoweave Robe.', i:'Spellfire Robe', f:st => st.made['Spellfire Robe'] || st.made['Primal Mooncloth Robe'] || st.made['Frozen Shadoweave Robe'], pts:25},
+  {id:'boom', c:'Crafting', n:'Some Assembly Required', d:'Have an engineering project explode in your face.', i:'spell_fire_selfdestruct', f:st => st.st.booms > 0, hidden:1},
+  {id:'de100', c:'Crafting', n:'Disenchanter', d:'Disenchant 100 items.', i:'Arcane Dust', f:st => st.st.de >= 100},
+  {id:'void', c:'Crafting', n:'Into the Void', d:'Obtain a Void Crystal.', i:'Void Crystal', f:st => st.found['Void Crystal']},
+  {id:'crafts1000', c:'Crafting', n:'Crafting Montage', d:'Craft 1,000 items.', i:'inv_hammer_20', f:st => st.st.crafts >= 1000},
+  {id:'g100', c:'Gold', n:'Pocket Change', d:'Hold 100 gold.', i:'inv_misc_coin_01', f:st => st.gold >= 100e4},
+  {id:'g1000g', c:'Gold', n:'Time Is Money, Friend!', d:'Hold 1,000 gold.', i:'inv_misc_coin_03', f:st => st.gold >= 1000e4},
+  {id:'g10000', c:'Gold', n:'Goblin Tycoon', d:'Hold 10,000 gold.', i:'inv_misc_coin_04', f:st => st.gold >= 10000e4, pts:25},
+  {id:'goldcap', c:'Gold', n:'214,748g 36s 47c', d:'Hold the gold cap of the Burning Crusade.', i:'inv_misc_coin_05', f:st => st.gold >= 2147483647, pts:100},
+  {id:'sold1000', c:'Gold', n:'Market Maker', d:'Sell 1,000 items on the Auction House.', i:'inv_misc_bag_10', f:st => st.st.sold >= 1000},
+  {id:'crash', c:'Gold', n:'Market Crash', d:'Sell enough of one item to push its price below half of normal.', i:'inv_misc_coin_14', f:st => st.st.crash > 0},
+  {id:'comm10', c:'Gold', n:'Trade Chat Hero', d:'Fulfill 10 Trade chat requests.', i:'inv_letter_15', f:st => st.st.comms >= 10},
+  {id:'comm50', c:'Gold', n:'Shattrath Tycoon', d:'Fulfill 50 Trade chat requests.', i:'inv_letter_15', f:st => st.st.comms >= 50, pts:25},
+  {id:'ride1', c:'Riding', n:'Giddy Up!', d:'Learn Apprentice Riding.', i:'Brown Horse Bridle', f:st => mountTier(st) >= 1},
+  {id:'ride2', c:'Riding', n:'Epic Steed', d:'Ride at 100% speed.', i:'Swift Brown Steed', f:st => mountTier(st) >= 2},
+  {id:'ride3', c:'Riding', n:'Gryphon Rider', d:'Take to the skies of Outland.', i:'ability_mount_gryphon_01', f:st => mountTier(st) >= 3},
+  {id:'ride4', c:'Riding', n:'Swift Flight Form', d:'Fly at 280% speed. The 5,000 gold question, answered.', i:'Swift Purple Gryphon', f:st => mountTier(st) >= 4, pts:25},
+  {id:'attuned', c:'Raids', n:'Attuned', d:"Obtain The Master's Key.", i:"The Master's Key", f:st => st.keys.kara},
+  {id:'warhorse', c:'Raids', n:"Midnight's Steed", d:"Obtain the Fiery Warhorse's Reins from Attumen the Huntsman.", i:"Fiery Warhorse's Reins", f:st => st.found["Fiery Warhorse's Reins"], pts:25},
+  {id:'raven', c:'Raids', n:'The Raven Lord', d:'Obtain the Reins of the Raven Lord from Anzu.', i:'Reins of the Raven Lord', f:st => st.found['Reins of the Raven Lord'], pts:25},
+  {id:'alar', c:'Raids', n:'Rise from the Ashes', d:"Obtain Ashes of Al'ar from Kael'thas Sunstrider.", i:"Ashes of Al'ar", f:st => st.found["Ashes of Al'ar"], pts:50},
+  {id:'pinchy', c:'Fishing', n:"Mr. Pinchy's Wish", d:'Catch Mr. Pinchy and make a wish.', i:'Mr. Pinchy', f:st => st.flags.wish},
+  {id:'crafty', c:'Fishing', n:'Old Crafty', d:'Fish up Old Crafty in Orgrimmar.', i:'Old Crafty', f:st => st.found['Old Crafty']},
+  {id:'ironjaw', c:'Fishing', n:'Old Ironjaw', d:'Fish up Old Ironjaw in Ironforge.', i:'Old Ironjaw', f:st => st.found['Old Ironjaw']},
+  ...PHASES.map((ph, i) => ({id:'phase' + i, c:'Shattered Sun', n:ph.n, d:`Help your guild complete: ${ph.n}.`, i:i === 5 ? 'inv_misc_statue_07' : 'inv_shield_48', f:() => (G.project?.phase || 0) > i, pts:i === 5 ? 50 : 10, title: i === 5 ? 'of the Shattered Sun' : null})),
+  {id:'honored', c:'Shattered Sun', n:'Honored by the Shattered Sun', d:'Reach Honored with the Shattered Sun Offensive.', i:'inv_shield_48', f:st => st.rep >= 9000},
+  {id:'exalted', c:'Shattered Sun', n:'Exalted with the Shattered Sun Offensive', d:'Reach Exalted with the Shattered Sun Offensive.', i:'inv_shield_48', f:st => st.rep >= 42000, pts:25},
+  {id:'bank', c:'Guild', n:'Guild Banker', d:'Deposit 250 items in the guild bank.', i:'inv_misc_bag_10_blue', f:st => st.st.dep >= 250},
+  {id:'report', c:'Easter Eggs', n:'Report Spam', d:'Report a gold seller. New in patch 2.4!', i:'inv_misc_note_06', f:st => st.flags.report, hidden:1},
+  {id:'thunderfury', c:'Easter Eggs', n:'Did Someone Say...?', d:'Click the [Thunderfury, Blessed Blade of the Windseeker] link in Trade chat.', i:'Thunderfury, Blessed Blade of the Windseeker', f:st => st.flags.tf, hidden:1},
+  {id:'leeroy', c:'Easter Eggs', n:'Leeroy!', d:'At least you have chicken.', i:'inv_misc_food_15', f:st => st.flags.leeroy, hidden:1, title:'Jenkins'},
+  {id:'dkp', c:'Easter Eggs', n:'Fifty DKP Minus!', d:'Learn about raid etiquette the hard way.', i:'inv_misc_coin_13', f:st => st.flags.dkp, hidden:1},
+  {id:'murloc', c:'Easter Eggs', n:'Mrgglglglgl!', d:'Enter an ancient code of the Murloc people.', i:'Murloc Costume', f:st => st.flags.konami, hidden:1},
+  {id:'poke', c:'Easter Eggs', n:'Stop Poking Me!', d:'Click the logo until it gets annoyed.', i:'inv_misc_head_gnome_01', f:st => st.flags.poke, hidden:1},
+  {id:'raidnight', c:'Easter Eggs', n:"Raid Night's Over?", d:'Play between 3 and 5 in the morning. Go to bed.', i:'inv_misc_pocketwatch_02', f:st => st.flags.night, hidden:1},
+  {id:'need', c:'Easter Eggs', n:'Need!', d:'Roll a 100.', i:'inv_misc_ticket_tarot_lunacy', f:st => st.flags.roll100, hidden:1},
+  {id:'welcome', c:'Easter Eggs', n:'Welcome Back, Hero', d:'Return after a whole day away. Your character kept working.', i:'Hearthstone', f:st => st.flags.away, hidden:1},
+  {id:'northrend', c:'Easter Eggs', n:'Northrend Awaits', d:'Reclaim the Isle of Quel\'Danas and master a profession. Something stirs in the frozen north...', i:'spell_frost_frostarmor02', f:st => (G.project?.phase || 0) >= 6 && Object.keys(st.profs).some(p => sk(st, p) >= 375), hidden:1, pts:50},
+];
+const achPts = a => a.pts || 10;
+function checkAch(live){
+  if (!ST) return;
+  for (const a of ACH) {
+    if (ST.ach[a.id]) continue;
+    let ok = false; try { ok = !!a.f(ST); } catch(e) {}
+    if (!ok) continue;
+    ST.ach[a.id] = now(); DIRTY = true;
+    if (live) {
+      toast(`<div class="ach">${ic(a.i, {size:56, noTip:1, q:4})}<div><div class="h">Achievement Earned</div><div class="n">${esc(a.n)}</div></div><div class="pts">${achPts(a)}</div></div>`, 6000);
+      NET.chat({pid:PID, name:ST.name, type:'ach', txt:a.n});
+      if (a.title) chat('c-sys', `You have earned the title "${esc(a.title)}". Choose it in Feats.`);
+      if (a.id === 'northrend') setTimeout(() => modal(`<div class="ftitle">Something stirs in the north...</div><div class="fbody"><div class="parch"><h3>The Lich King</h3><p>"The Legion is broken. The Sunwell is reclaimed. And yet, from Icecrown, a cold voice whispers your name..."</p><p><i>Patch 3.0.2 — Echoes of Doom — is coming. Bring a warm cloak.</i></p></div><div class="actions"><button class="btn" data-a="close">I'm ready</button></div></div>`), 1500);
+    }
+  }
+}
+
+// ---------- Persistence ----------
+let PIN = '';
+function summary(){
+  const sp = ST.act ? ALLSPOTS[ST.act.k + ':' + ST.act.id] : null;
+  const pts = ACH.filter(a => ST.ach[a.id]).reduce((s, a) => s + achPts(a), 0);
+  return {name:ST.name, title:ST.title || '', profs:Object.fromEntries(Object.entries(ST.profs).map(([p, v]) => [p, v.s])), act: sp ? `${sp.k === 'combat' ? 'Fighting' : PROFS[sp.k].verb}: ${sp.n} (${sp.z})` : 'Idle in Shattrath', craft: ST.cq ? RBYID[ST.cq]?.o || '' : '', seen:now(), pts, gold:ST.gold, rep:ST.rep};
+}
+async function saveNow(){
+  if (!ST || LOCKED) return;
+  try { localStorage.setItem('shattrath_cache_' + GUILD + '_' + PID, JSON.stringify(ST)); } catch(e) {}
+  try { await NET.save(ST, summary(), PIN); } catch(e) { console.warn('save failed', e); }
+}
+
+// ---------- Actions ----------
+function act(name, d){ const f = A[name]; if (f) { f(d); DIRTY = true; render(true); } }
+const A = {
+  close(){ $('#modal').classList.add('hidden'); },
+  view(d){ VIEW = d.v; window.scrollTo(0, 0); closeTip(); },
+  sub(d){ SUB[VIEW] = d.v; },
+  start(d){
+    const sp = ALLSPOTS[d.k + ':' + d.id]; if (!sp || !spotOk(ST, sp)) return;
+    tick(); const t = now(); ST.act = {k:d.k, id:d.id, s0:t, nx:t + gatherDur(ST, sp, t)};
+    chat('c-sys', `You begin ${sp.k === 'combat' ? 'fighting' : PROFS[sp.k].verb.toLowerCase()} at ${esc(sp.n)}, ${esc(sp.z)}.`);
+  },
+  stop(){ tick(); ST.act = null; },
+  selr(d){ SEL.recipe = d.id; },
+  queue(d){
+    const r = RBYID[d.id]; let n = d.n === 'all' ? maxCraft(ST, r) : d.n === 'inf' ? -1 : +d.n;
+    if (d.n === 'custom') n = Math.max(1, +($('#qtyIn')?.value || 1));
+    if (!n) return; tick();
+    const e = ST.q.find(x => x.id === r.id);
+    if (e) e.n = (n === -1 || e.n === -1) ? -1 : e.n + n; else ST.q.push({id:r.id, n});
+    tryStartCraft(ST, now(), newOut(true));
+  },
+  unq(d){ const i = +d.i; const e = ST.q[i]; if (!e) return; if (ST.cq === e.id) { ST.cs = 0; ST.cq = null; } ST.q.splice(i, 1); tryStartCraft(ST, now(), newOut(true)); },
+  item(d){ itemModal(d.n, d.ctx); },
+  learn(d){
+    const p = d.p; if (ST.profs[p]) return;
+    if (!PROFS[p].secondary && PRIMARY.filter(x => ST.profs[x]).length >= 2) return;
+    if (ST.gold < RANKS[0].cost) return; ST.gold -= RANKS[0].cost;
+    ST.profs[p] = {s:1, m:75}; chat('c-sys', `You have learned a new skill: ${PROFS[p].n} (Apprentice).`);
+  },
+  train(d){ const pr = ST.profs[d.p]; const nx = RANKS[rankOf(pr.m) + 1]; if (!nx || pr.s < nx.req || ST.gold < nx.cost) return; ST.gold -= nx.cost; pr.m = nx.max; chat('c-sys', `You have learned ${nx.n} ${PROFS[d.p].n}. Maximum skill is now ${nx.max}.`); },
+  unlearn(d){ modal(`<div class="ftitle">Unlearn ${PROFS[d.p].n}?</div><div class="fbody"><p>Do you really want to unlearn ${PROFS[d.p].n}? All skill and learned recipes will be lost.</p><div class="actions"><button class="btn" data-a="unlearn2" data-p="${d.p}">Accept</button><button class="btn dark" data-a="close">Decline</button></div></div>`); },
+  unlearn2(d){ delete ST.profs[d.p]; RECIPES.filter(r => r.p === d.p).forEach(r => delete ST.known[r.id]); if (ST.act?.k === d.p) ST.act = null; ST.q = ST.q.filter(e => RBYID[e.id]?.p !== d.p); if (ST.cq && RBYID[ST.cq]?.p === d.p) { ST.cs = 0; ST.cq = null; } A.close(); },
+  spec(d){ const cost = ST.spec.alchemy ? 1500000 : 0; if (ST.gold < cost) return; ST.gold -= cost; ST.spec.alchemy = d.s; chat('c-sys', `You are now a ${SPECS[d.s].n} Master.`); },
+  ride(){ const nx = RIDING[ST.riding + 1]; if (!nx || ST.gold < nx.cost) return; tick(); ST.gold -= nx.cost; ST.riding++; chat('c-sys', `You have learned ${nx.n}. ${nx.d}`); },
+  key(d){ const k = KEYS[d.k]; if (ST.keys[d.k] || ST.gold < k.cost) return; ST.gold -= k.cost; ST.keys[d.k] = 1; chat('c-sys', `You receive item: ${esc(k.n)}.`); },
+  buyrec(d){ const r = RBYID[d.id]; if (!r || ST.known[r.id] || ST.gold < r.cost || !ST.profs[r.p] || (r.rep && ST.rep < r.rep)) return; ST.gold -= r.cost; ST.known[r.id] = 1; chat('c-sys', `You have learned how to create a new item: ${ilink(r.o)}.`); },
+  sell(d){
+    const n = d.n, have = ST.inv[n] || 0; let q = d.q === 'all' ? have : Math.min(have, +d.q || +($('#qtyIn')?.value || 0)); if (q <= 0 || !tradeable(n)) return;
+    const v = sellValue(n, q); take(ST, n, q); ST.gold += v; ST.st.earned += v; ST.st.sold += q;
+    const before = unitPrice(n); NET.market(n, q / liq(n)).then(() => { if (unitPrice(n) < basePrice(n) * wave(n, now()) * .5) ST.st.crash++; DIRTY = true; });
+    chat('c-sys', `Auction House: sold ${ilink(n)}x${q} for ${money(v)}.`); A.close();
+  },
+  vendor(d){ const n = d.n, have = ST.inv[n] || 0; const q = d.q === 'all' ? have : Math.min(have, +($('#qtyIn')?.value || 1)); if (q <= 0) return; const v = I(n).s * q; take(ST, n, q); ST.gold += v; chat('c-sys', `You sell ${ilink(n)}x${q} to a vendor for ${money(v)}.`); A.close(); },
+  buy(d){ const n = d.n, q = Math.max(1, +($('#qtyIn')?.value || d.q || 1)); if (!tradeable(n)) return; const c = buyCost(n, q); if (ST.gold < c) { chat('c-sys', "You don't have enough money."); return; } ST.gold -= c; give(ST, n, q, newOut(false)); NET.market(n, -q / liq(n)); chat('c-sys', `Auction House: bought ${ilink(n)}x${q} for ${money(c)}.`); A.close(); tryStartCraft(ST, now(), newOut(true)); },
+  async deposit(d){ const n = d.n, have = ST.inv[n] || 0; const q = d.q === 'all' ? have : Math.min(have, +($('#qtyIn')?.value || 1)); if (q <= 0) return; take(ST, n, q); ST.st.dep += q; A.close(); const ok = await NET.bankTx(n, q); if (!ok) give(ST, n, q, newOut(false)); else NET.chat({pid:PID, name:ST.name, type:'sys', txt:`${ST.name} deposited ${n} x${q} in the guild bank.`}); DIRTY = true; },
+  async withdraw(d){ const n = d.n; const q = Math.max(1, +($('#qtyIn')?.value || 1)); A.close(); const ok = await NET.bankTx(n, -q); if (ok) { give(ST, n, q, newOut(false)); NET.chat({pid:PID, name:ST.name, type:'sys', txt:`${ST.name} withdrew ${n} x${q} from the guild bank.`}); tryStartCraft(ST, now(), newOut(true)); } else chat('c-sys', 'The guild bank does not have that many.'); DIRTY = true; },
+  combine(d){ const n = d.n, p = MOTES[n]; let k = d.q === 'all' ? Math.floor((ST.inv[n] || 0) / 10) : 1; k = Math.min(k, Math.floor((ST.inv[n] || 0) / 10)); if (k < 1) return; take(ST, n, k * 10); give(ST, p, k, newOut(false)); ST.flags.combined = 1; chat('c-loot', `You create: ${ilink(p)}${k > 1 ? 'x' + k : ''}.`); A.close(); },
+  de(d){ disenchant(d.n); if (!(ST.inv[d.n] > 0)) A.close(); else itemModal(d.n); },
+  deall(){ let n = 0; for (const x of Object.keys(ST.inv)) while ((ST.inv[x] || 0) > 0 && deTier(x) && ['low','mid','high','outland'].includes(deTier(x)) && sk(ST, 'enchanting') >= DE[deTier(x)].req && n < 300) { disenchant(x); n++; } if (!n) chat('c-sys', 'Nothing to disenchant.'); },
+  use(d){ useItem(d.n); },
+  async contribute(d){
+    const n = d.n, ph = PHASES[G.project.phase || 0]; if (!ph) return; const need = (ph.need[n] || 0) - (G.project.got?.[mkey(n)] || 0);
+    const q = Math.min(ST.inv[n] || 0, need); if (q <= 0) return; take(ST, n, q); A.close();
+    const phase0 = G.project.phase || 0; const acc = await NET.project(n, q);
+    if (acc < q) give(ST, n, q - acc, newOut(false));
+    if (acc > 0) { const rep = Math.max(1, Math.round(basePrice(n) * acc / 500)); ST.rep += rep; chat('c-sys', `You contribute ${ilink(n)}x${acc} to the Shattered Sun Offensive. Reputation with Shattered Sun Offensive increased by ${rep}.`); }
+    if ((G.project.phase || 0) > phase0) { const msg_ = `${PHASES[phase0].n} has been secured! ${PHASES[phase0].reward}.`; raidWarn(msg_); NET.chat({pid:PID, name:ST.name, type:'phase', txt:msg_}); }
+    DIRTY = true;
+  },
+  fulfill(d){ const c = ST.comm.find(x => x.id == d.id); if (!c) return; if ((ST.inv[c.item] || 0) < c.qty) { chat('c-sys', `You need ${ilink(c.item)}x${c.qty}.`); return; } take(ST, c.item, c.qty); ST.gold += c.pay; ST.st.earned += c.pay; ST.st.comms++; ST.comm = ST.comm.filter(x => x !== c); chat('c-whisper', `[${c.who}] whispers: ${pick(['ty <3','thx mate, gl with the grind','omg ty! u rock','pleasure doing business','ty, see u in Shatt'])} <span class="c-sys">(+${money(c.pay)})</span>`); },
+  title(d){ ST.title = d.t; },
+  report(d){ ST.flags.report = 1; const el = document.querySelector(`[data-rep="${d.id}"]`); if (el) el.closest('div').innerHTML = '<span class="c-sys">Player reported for spamming. Thank you!</span>'; },
+  thunderfury(){ ST.flags.tf = 1; itemModal('Thunderfury, Blessed Blade of the Windseeker'); },
+  who(d){ const m = G.members[d.pid]; if (m) memberModal(d.pid, m); },
+  feats(){ VIEW = 'feats'; },
+  chatbig(){ $('#chatwrap').classList.toggle('big'); },
+};
+function deTier(n){ const it = I(n); if (!it.sl || it.q < 2 || NOAH.has(n) && it.q < 4 || MOUNT_ITEMS[n]) return null; if (it.q >= 4) return 'epic'; if (it.q === 3) return 'blue'; return it.il < 25 ? 'low' : it.il < 45 ? 'mid' : it.il < 66 ? 'high' : 'outland'; }
+function disenchant(n){
+  const tier = deTier(n); if (!tier || !(ST.inv[n] > 0)) return; const D_ = DE[tier]; if (sk(ST, 'enchanting') < D_.req) return;
+  take(ST, n, 1); ST.st.de++; const out = newOut(true); let got = 0;
+  for (const [x, mn, mx, c] of D_.r) if (Math.random() < c && !got++) { const q = rnd(mn, mx); give(ST, x, q, out); lootMsg(out, x, q); }
+  if (!got) { const [x, mn, mx] = D_.r[0]; const q = rnd(mn, mx); give(ST, x, q, out); lootMsg(out, x, q); }
+  skillUp(ST, 'enchanting', D_.s, out);
+}
+function useItem(n){
+  if (!(ST.inv[n] > 0)) return;
+  const r = RBYITEM[n];
+  if (r) {
+    if (!ST.profs[r.p] || ST.profs[r.p].s < r.s[0]) { chat('c-sys', `Requires ${PROFS[r.p].n} (${r.s[0]}).`); return; }
+    if (ST.known[r.id]) { chat('c-sys', 'You already know that recipe.'); return; }
+    take(ST, n, 1); ST.known[r.id] = 1; chat('c-sys', `You have learned how to create a new item: ${ilink(r.o)}.`); A.close(); return;
+  }
+  if (n === 'Mr. Pinchy') {
+    take(ST, n, 1); ST.flags.wish = 1; const x = Math.random(); let res;
+    if (x < .3) { give(ST, 'Magical Crawdad Box', 1, newOut(false)); res = `Mr. Pinchy's eyes glow. A ${ilink('Magical Crawdad Box')} appears in your bags!`; }
+    else if (x < .65) { ST.buffs.pinchy = now() + 2 * H; res = "Mr. Pinchy grants you his Blessing: +25% gathering speed for 2 hours."; }
+    else { give(ST, 'Furious Crawdad', 10, newOut(false)); give(ST, 'Mote of Water', 5, newOut(false)); res = `"You wished for... crawdads?" Mr. Pinchy shrugs. You receive ${ilink('Furious Crawdad')}x10 and ${ilink('Mote of Water')}x5.`; }
+    modal(`<div class="ftitle">Mr. Pinchy's Wish</div><div class="fbody"><div class="parch">${ic('Mr. Pinchy', {size:56})} <p>You hold Mr. Pinchy close and whisper your wish...</p><p>${res}</p></div><div class="actions"><button class="btn" data-a="close">Okay</button></div></div>`);
+    return;
+  }
+  if (n === 'Smokywood Pastures Gift Pack') { take(ST, n, 1); const gg = rnd(15, 40) * 1e4; ST.gold += gg; const p = pick(Object.values(MOTES)); give(ST, p, 1, newOut(false)); chat('c-sys', `Greatfather Winter's gift: ${money(gg)} and ${ilink(p)}. Happy Winter Veil!`); A.close(); return; }
+  if (n === 'Hearthstone') { if ((ST.cds.hearth || 0) > now()) { chat('c-sys', 'Item is not ready yet.'); A.close(); return; } ST.cds.hearth = now() + H; chat('c-emote', 'You hearth to Shattrath. The Lower City smells of spice and fel... You feel rested.'); A.close(); return; }
+  if (n === 'Murloc Costume') { MURLOC_UNTIL = now() + 5 * MIN; chat('c-emote', 'You put on the Murloc Costume. Mrgglglgl!'); A.close(); return; }
+  if (n === 'Magical Crawdad Box') { chat('c-emote', 'Your Magical Crawdad scuttles happily at your feet.'); A.close(); return; }
+  if (MOTES[n]) A.combine({n, q:'all'});
+}
+
+// ---------- Tooltip & modals ----------
+const FLAVOR = {'Black Lotus':'Every raid leader in Azeroth just whispered you.','Mr. Pinchy':'Use: Make a wish!','Netherwing Egg':'The egg is still warm.','Hearthstone':'Use: Returns you to Shattrath City. Speak to an Innkeeper in a different place to change your home location.','Old Crafty':'He has been around longer than the Orgrimmar bank queue.','Old Ironjaw':'A living legend of the Ironforge canals.','Lionheart Champion':'Chance on hit: Increases Strength by 100 for 10 sec.','Thunderfury, Blessed Blade of the Windseeker':'Did someone say...?','Nether Vortex':'Swirling with the power of the Sunwell.','Fel Lotus':'Druids in Flight Form want this. You have been warned.','Smokywood Pastures Gift Pack':'Use: Open it! From Greatfather Winter.','Murloc Costume':'Use: Become a murloc. Mrrgll!','Ashes of Al\'ar':"Use: Teaches you how to summon this mount. This is a very fast mount."};
+function tipHtml(n){
+  const it = I(n); let h = `<div class="tn tq${it.q}">${esc(n)}</div>`;
+  if (NOAH.has(n) || RBYITEM[n]) h += '<div class="wh">Binds when picked up</div>'; else if (it.boe) h += '<div class="wh">Binds when equipped</div>';
+  if (MOUNT_ITEMS[n]) h += `<div class="gr">Use: Rideable mount — ${RIDING[MOUNT_ITEMS[n]].n.replace(' Riding', '')} speed (${Math.round((RIDING[MOUNT_ITEMS[n]].mult - 1) * 100)}% faster gathering).</div>`;
+  if (it.sl) h += `<div class="wh">${esc(it.sl)}</div>`;
+  if (it.il > 1 && it.sl) h += `<div class="ye">Item Level ${it.il}</div>`;
+  if (it.v === 'enchant') h += '<div class="gr">Enchanting service. Sold to players via Trade chat or the Auction House.</div>';
+  const r = RBYITEM[n]; if (r) h += `<div class="gr">Use: Teaches you how to craft ${esc(r.o)}.</div><div class="${ST && sk(ST, r.p) >= r.s[0] ? 'wh' : 'rd'}">Requires ${PROFS[r.p].n} (${r.s[0]})</div>`;
+  if (MOTES[n]) h += `<div class="gr">Use: Combine 10 to make a ${esc(MOTES[n])}.</div>`;
+  if (FLAVOR[n]) h += `<div class="flav">"${esc(FLAVOR[n])}"</div>`;
+  const uses = RECIPES.filter(x => x.m[n]).map(x => x.o).slice(0, 4); if (uses.length) h += `<div class="gy small">Used in: ${uses.map(esc).join(', ')}${RECIPES.filter(x => x.m[n]).length > 4 ? '…' : ''}</div>`;
+  if (it.s) h += `<div class="wh">Sell Price: ${money(it.s)}</div>`;
+  if (tradeable(n)) h += `<div class="wh">Auction: ${money(unitPrice(n))} <span class="gy small">each</span></div>`;
+  if (ST && ST.inv[n]) h += `<div class="gy small">In bags: ${ST.inv[n]}</div>`;
+  return h;
+}
+function modal(html){ const m = $('#modal'); m.innerHTML = `<div class="frame">${html}</div>`; m.classList.remove('hidden'); }
+function itemModal(n){
+  closeTip(); const have = ST.inv[n] || 0, bank = G.bank[mkey(n)] || 0, ph = PHASES[G.project.phase || 0];
+  const needP = ph ? (ph.need[n] || 0) - (G.project.got?.[mkey(n)] || 0) : 0;
+  let a = '';
+  const qty = `<div class="qtyrow"><span class="lbl">Quantity</span><input id="qtyIn" class="inp num" type="number" min="1" value="${have || 1}"><button class="btn sm dark" data-a="qset" data-v="1">1</button><button class="btn sm dark" data-a="qset" data-v="10">10</button>${have ? `<button class="btn sm dark" data-a="qset" data-v="${have}">All</button>` : ''}</div>`;
+  if (have) {
+    if (tradeable(n)) a += `<button class="btn" data-a="sell" data-n="${esc(n)}">Sell on AH</button>`;
+    if (I(n).s) a += `<button class="btn dark" data-a="vendor" data-n="${esc(n)}">Vendor (${money(I(n).s)} ea)</button>`;
+    if (!NOAH.has(n) || RBYITEM[n] || n === 'Netherwing Egg') a += `<button class="btn dark" data-a="deposit" data-n="${esc(n)}">Guild Bank</button>`;
+    if (RBYITEM[n] || ['Mr. Pinchy','Smokywood Pastures Gift Pack','Hearthstone','Murloc Costume','Magical Crawdad Box'].includes(n)) a += `<button class="btn" data-a="use" data-n="${esc(n)}">Use</button>`;
+    if (MOTES[n] && have >= 10) a += `<button class="btn" data-a="combine" data-n="${esc(n)}" data-q="all">Combine all (${Math.floor(have / 10)})</button>`;
+    const tier = deTier(n); if (tier && ST.profs.enchanting) a += `<button class="btn" data-a="de" data-n="${esc(n)}" ${sk(ST, 'enchanting') < DE[tier].req ? 'disabled' : ''}>Disenchant${sk(ST, 'enchanting') < DE[tier].req ? ' (' + DE[tier].req + ')' : ''}</button>`;
+    if (needP > 0) a += `<button class="btn" data-a="contribute" data-n="${esc(n)}">Give to Shattered Sun (${Math.min(have, needP)})</button>`;
+  }
+  if (tradeable(n)) a += `<button class="btn" data-a="buy" data-n="${esc(n)}">Buy</button>`;
+  if (bank) a += `<button class="btn dark" data-a="withdraw" data-n="${esc(n)}">Withdraw (${bank} in bank)</button>`;
+  const est = tradeable(n) ? `<div class="small muted" id="qtyEst" style="margin-top:6px"></div>` : '';
+  modal(`<div class="fbody"><div style="display:flex;gap:12px;align-items:flex-start">${ic(n, {size:56, noTip:1})}<div class="ttbox" style="flex:1">${tipHtml(n)}</div></div>${a ? qty + est : ''}<div class="actions">${a}<button class="btn dark" data-a="close">Close</button></div></div>`);
+  const upd = () => { const e = $('#qtyEst'); if (!e) return; const q = Math.max(1, +$('#qtyIn').value || 1); e.innerHTML = `${have ? `Sell ${q}: ~${money(sellValue(n, Math.min(q, have)))} · ` : ''}Buy ${q}: ${money(buyCost(n, q))}`; };
+  $('#qtyIn')?.addEventListener('input', upd); upd();
+  A.qset = d => { $('#qtyIn').value = d.v; upd(); };
+}
+function memberModal(pid, m){
+  const profs = Object.entries(m.profs || {}).map(([p, s]) => `<div class="kv">${ic(PROFS[p]?.icon, {size:20, noTip:1})} <span style="flex:1">${PROFS[p]?.n}</span><span class="num">${s}</span></div>`).join('');
+  modal(`<div class="ftitle">${esc(m.name)}${m.title ? ' ' + esc(m.title) : ''}</div><div class="fbody"><div class="muted small">${esc(m.act || '')}</div><div class="sep"></div>${profs || '<i class="muted">No professions</i>'}<div class="sep"></div><div class="kv"><span class="lbl">Achievement points</span><span class="num">${m.pts || 0}</span></div><div class="kv"><span class="lbl">Shattered Sun</span><span>${repName(m.rep || 0)}</span></div><div class="kv"><span class="lbl">Last seen</span><span>${online(m) ? '<span class="grn">Online</span>' : fmtDur(now() - m.seen) + ' ago'}</span></div><div class="actions"><button class="btn dark" data-a="close">Close</button></div></div>`);
+}
+const online = m => now() - (m.seen || 0) < 75e3;
+function repName(r){ let n = 'Neutral'; for (const [x, v] of REP) if (r >= v) n = x; return n; }
+function repBar(r){ let i = 1; while (i < REP.length - 1 && r >= REP[i + 1][1]) i++; const [n, lo] = REP[i], hi = REP[i + 1] ? REP[i + 1][1] : lo + 1000; const exalted = r >= 42000; return `<div class="bar rep"><div class="fill" style="width:${exalted ? 100 : (r - lo) / (hi - lo) * 100}%"></div><span>${n} ${exalted ? '' : `${r - lo} / ${hi - lo}`}</span></div>`; }
+
+let TIPEL = null;
+function closeTip(){ $('#tip').classList.add('hidden'); TIPEL = null; }
+
+// ---------- Views ----------
+const TABS = [['gather','Gathering','trade_mining'],['craft','Crafting','trade_blacksmithing'],['bags','Bags','inv_misc_bag_10'],['ah','Auction House','inv_misc_coin_01'],['guild','Guild','inv_shield_48'],['trainer','Trainers','inv_misc_book_09'],['feats','Feats','inv_misc_pocketwatch_01']];
+function renderTabs(){
+  $('#tabs').innerHTML = TABS.map(([k, n, i]) => `<button class="tab ${VIEW === k ? 'on' : ''}" data-a="view" data-v="${k}">${ic(i, {noTip:1})}<span class="lab">${n}</span>${k === 'ah' && ST.comm.some(c => (ST.inv[c.item] || 0) >= c.qty) ? '<span class="dot"></span>' : ''}</button>`).join('');
+}
+function render(force){
+  if (!ST) return;
+  const ae = document.activeElement;
+  if (!force && ae && ae.tagName === 'INPUT' && $('#view').contains(ae)) return;
+  if (!force && !$('#modal').classList.contains('hidden')) return;
+  LAST_RENDER = now(); DIRTY = false;
+  const titles = {gather:'Gathering', craft:'Crafting', bags:'Bags', ah:'Auction House — Shattrath City', guild:'Guild', trainer:'Trainers of Shattrath', feats:'Feats of Strength'};
+  $('#mainTitle').textContent = titles[VIEW];
+  const sy = window.scrollY;
+  $('#view').innerHTML = ({gather:vGather, craft:vCraft, bags:vBags, ah:vAH, guild:vGuild, trainer:vTrainer, feats:vFeats}[VIEW])();
+  window.scrollTo(0, sy);
+  renderTabs(); renderTop();
+}
+function renderTop(){
+  $('#whoName').textContent = ST.name + (ST.title === 'Jenkins' ? ' Jenkins' : '');
+  $('#whoTitle').textContent = ST.title && ST.title !== 'Jenkins' ? ST.title : (NET.mode === 'firebase' ? `<${GUILDNAME}>` : 'Shattrath City');
+  $('#whoGold').innerHTML = money(ST.gold);
+  const mt = mountTier(ST); const mi = Object.keys(MOUNT_ITEMS).filter(n => ST.inv[n] > 0 && MOUNT_ITEMS[n] === mt)[0];
+  $('#whoMount').innerHTML = mt ? ic(mi || RIDING[mt].icon, {size:32, noTip:!mi}) : '';
+}
+function welcomeQuest(){
+  return `<div class="parch" style="margin-bottom:12px"><h3>Welcome to Shattrath, ${esc(ST.name)}</h3>
+  <p style="margin:6px 0">A'dal has called every able crafter to the City of Light. Visit the <b>Trainers</b> to learn up to two primary professions (Fishing is free). Then start gathering: your character keeps working while you are away, up to 24 hours.</p>
+  <p style="margin:6px 0"><b>Objectives</b><br>- Learn two professions<br>- Reach Artisan (300) and fly to Outland's richer nodes<br>- Help your guild retake the Isle of Quel'Danas</p>
+  <button class="btn" data-a="view" data-v="trainer">Go to the Trainers</button></div>`;
+}
+function vGather(){
+  const kinds = ['mining','herbalism','skinning','fishing'].filter(k => ST.profs[k]).concat(['combat']);
+  let k = SUB.gather && kinds.includes(SUB.gather) ? SUB.gather : (ST.act?.k && kinds.includes(ST.act.k) ? ST.act.k : kinds[0]);
+  SUB.gather = k;
+  let h = Object.keys(ST.profs).length ? '' : welcomeQuest();
+  h += `<div class="subtabs">${kinds.map(x => `<button class="tab ${x === k ? 'on' : ''}" data-a="sub" data-v="${x}">${ic(x === 'combat' ? 'ability_dualwield' : PROFS[x].icon, {noTip:1})}${x === 'combat' ? 'Combat' : PROFS[x].n}</button>`).join('')}</div>`;
+  if (k !== 'combat') { const pr = ST.profs[k]; h += skillBar(k) + `<div class="hint" style="margin:6px 0 8px">Node colors work like in game: <span class="d0">orange</span> always gives skill, <span class="d1">yellow</span> usually, <span class="d2">green</span> rarely, <span class="d3">gray</span> never.</div>`; }
+  else h += `<div class="hint" style="margin-bottom:8px">Kill mobs for coin, cloth, motes and world drops. Raids need an attunement from the Trainers. Rare recipe drops can be learned or sent to a guildmate via the guild bank.</div>`;
+  for (const sp of SPOTS[k]) {
+    const ok = spotOk(ST, sp), on = ST.act && ST.act.k === k && ST.act.id === sp.id;
+    const d = k === 'combat' ? 1 : diff(ST.profs[k].s, gArr(sp.req));
+    let lock = '';
+    if (!ok) lock = k === 'combat' ? `Requires ${KEYS[sp.key].n}` : sp.flying && ST.profs[k].s >= sp.req ? 'Requires a flying mount' : `Requires ${PROFS[k].n} (${sp.req})`;
+    const drops = (sp.drops || []).map(([n]) => ic(n, {size:26})).join('') + (sp.green ? ic(GREENS[sp.green][0], {size:26}) : '') + (sp.epics ? ic(sp.epics[0], {size:26}) : '') + (sp.recipes || []).slice(0, 2).map(([n]) => ic(n, {size:26})).join('');
+    h += `<div class="row ${on ? 'sel' : ''} ${ok ? '' : 'locked'}">
+      <div class="grow"><div class="t1 ${k === 'combat' ? (sp.raid ? 'tq4' : 'wht') : 'd' + d}">${esc(sp.n)}</div>
+      <div class="t2">${esc(sp.z)} · ${k === 'combat' ? '' : 'req ' + sp.req + ' · '}${fmtDur(gatherDur(ST, sp, now()))} each${sp.flying ? ' · <span class="yel">flying</span>' : ''}${sp.coin ? ' · ' + money(sp.coin[0]) + '–' + money(sp.coin[1]) : ''}</div>
+      <div class="drops">${drops}</div>${lock ? `<div class="t2 red">${lock}</div>` : ''}</div>
+      ${on ? `<button class="btn dark" data-a="stop">Stop</button>` : `<button class="btn" data-a="start" data-k="${k}" data-id="${sp.id}" ${ok ? '' : 'disabled'}>${k === 'combat' ? 'Fight' : k === 'fishing' ? 'Fish' : 'Gather'}</button>`}
+    </div>`;
+  }
+  return h;
+}
+function skillBar(p){ const pr = ST.profs[p]; if (!pr) return ''; return `<div class="bar skill"><div class="fill" style="width:${pr.s / pr.m * 100}%"></div><span>${PROFS[p].n} ${pr.s} / ${pr.m} · ${RANKS[rankOf(pr.m)].n}</span></div>`; }
+function vCraft(){
+  const profs = ['mining','blacksmithing','alchemy','jewelcrafting','engineering','leatherworking','tailoring','enchanting'].filter(p => ST.profs[p]);
+  if (!profs.length) return `<div class="parch"><h3>No crafting professions</h3><p>Learn a crafting profession at the Trainers. Miners can smelt ore here too.</p><button class="btn" data-a="view" data-v="trainer">Trainers</button></div>`;
+  const p = profs.includes(SUB.craft) ? SUB.craft : profs[0]; SUB.craft = p;
+  const t = now();
+  const list = RECIPES.filter(r => r.p === p && (knows(ST, r) || (r.src && ST.profs[p])));
+  const sorted = list.sort((a, b) => (knows(ST, b) - knows(ST, a)) || (b.s[0] - a.s[0]));
+  let sel = RBYID[SEL.recipe]; if (!sel || sel.p !== p) sel = sorted.find(r => knows(ST, r)) || sorted[0];
+  const next = RECIPES.filter(r => r.p === p && !r.src && r.s[0] > ST.profs[p].s).sort((a, b) => a.s[0] - b.s[0])[0];
+  let h = `<div class="subtabs">${profs.map(x => `<button class="tab ${x === p ? 'on' : ''}" data-a="sub" data-v="${x}">${ic(PROFS[x].icon, {noTip:1})}${x === 'mining' ? 'Smelting' : PROFS[x].n}</button>`).join('')}</div>${skillBar(p)}<div style="height:10px"></div>`;
+  const detail = sel ? recipeDetail(sel, t) : '';
+  const rows = sorted.map(r => {
+    const k = knows(ST, r), mc = k ? maxCraft(ST, r) : 0, d = diff(ST.profs[p].s, r.s), cd = cdLeft(ST, r, t);
+    return `<div class="row ${sel && sel.id === r.id ? 'sel' : ''} ${k ? '' : 'locked'}" data-a="selr" data-id="${esc(r.id)}" style="cursor:pointer;min-height:40px;padding:4px 8px">
+      ${ic(r.pros ? r.icon : r.o, {size:26, noTip:1})}<div class="grow"><div class="t1 ${k ? 'd' + d : 'muted'}" style="font-size:13.5px">${esc(r.o)}${mc ? ` [${mc}]` : ''}</div>${k ? (cd ? `<div class="t2">Cooldown: ${fmtDur(cd)}</div>` : '') : `<div class="t2">${srcText(r)}</div>`}</div></div>`;
+  }).join('');
+  h += `<div class="two"><div>${detail}</div><div style="max-height:62vh;overflow:auto;border:1px solid #2c2014;background:rgba(0,0,0,.25)">${rows}${next ? `<div class="row locked" style="min-height:36px"><div class="t2">Next recipe at skill ${next.s[0]}: ${esc(next.o)}</div></div>` : ''}</div></div>`;
+  if (p === 'enchanting') h += `<div class="sep"></div><div class="hint">Disenchant green, blue and epic gear from the Bags tab to get Dust, Essences and Shards.</div><div class="actions"><button class="btn" data-a="deall">Disenchant all greens</button></div>`;
+  if (p === 'alchemy' && ST.profs.alchemy.s >= 325 && !ST.spec.alchemy) h += `<div class="sep"></div><div class="parch">Master Alchemist Zarevhi has a quest for you: choose a specialization at the Trainers.</div>`;
+  return h;
+}
+function srcText(r){ if (r.src === 'vendor') return `Sold by a vendor (Trainers tab)`; if (r.src === 'rep') return `Shattered Sun Quartermaster — ${repName(r.rep)}`; if (r.src === 'drop') return `World drop: ${esc(r.ri)}`; return ''; }
+function recipeDetail(r, t){
+  const k = knows(ST, r), mc = k ? maxCraft(ST, r) : 0, cd = cdLeft(ST, r, t), d = diff(ST.profs[r.p].s, r.s);
+  const mats = Object.entries(r.m).map(([m, q]) => { const have = ST.inv[m] || 0; return `<div class="row" style="min-height:40px;padding:4px 6px">${ic(m, {size:32})}<div class="grow"><div class="t1 tq${I(m).q}" style="font-size:13.5px">${esc(m)}</div></div><span class="num ${have >= q ? 'wht' : 'red'}">${have}/${q}</span></div>`; }).join('');
+  const val = r.pros ? '' : `<div class="kv small"><span class="muted">Auction value</span>${money(tradeable(r.o) ? unitPrice(r.o) * r.q : I(r.o).s)}</div><div class="kv small"><span class="muted">Reagents cost</span>${money(Object.entries(r.m).reduce((s, [m, q]) => s + (tradeable(m) ? unitPrice(m) : I(m).s * 4) * q, 0))}</div>`;
+  return `<div class="ttbox"><div style="display:flex;gap:10px;align-items:center">${ic(r.pros ? r.icon : r.o, {size:56, noTip:!!r.pros})}<div><div class="tn ${k ? 'd' + d : 'muted'}" style="font-size:16px">${esc(r.o)}${r.q > 1 ? ' x' + r.q : ''}</div><div class="small muted">${k ? DIFF[d] + ' · ' + r.t + 's' : srcText(r)}${r.spec && ST.spec.alchemy === r.spec ? ' · <span class="yel">mastery</span>' : ''}${r.cd ? ` · cooldown ${Math.round(r.cd * (1 - guildBuff('cd')))}h` : ''}</div></div></div>
+   <div class="small muted" style="margin:8px 0 2px">Reagents:</div>${mats}${val}
+   ${r.pros ? `<div class="small muted" style="margin-top:6px">Possible gems: ${PROSPECT[r.pros].g.map(([n]) => ic(n, {size:20})).join(' ')}</div>` : ''}
+   ${cd ? `<div class="red small" style="margin-top:6px">Cooldown remaining: ${fmtDur(cd)}</div>` : ''}
+   ${k ? `<div class="qtyrow"><input id="qtyIn" class="inp num" type="number" min="1" value="1"><button class="btn" data-a="queue" data-id="${esc(r.id)}" data-n="custom">Create</button><button class="btn" data-a="queue" data-id="${esc(r.id)}" data-n="all" ${mc ? '' : 'disabled'}>Create All (${mc})</button>${r.cd ? '' : `<button class="btn dark" data-a="queue" data-id="${esc(r.id)}" data-n="inf" title="Keeps crafting whenever reagents are available, also while you are offline">Repeat ∞</button>`}</div>
+   <div class="hint" style="margin-top:6px">Queued crafts keep going while you're offline, using what you gather.</div>` : ''}</div>`;
+}
+function vBags(){
+  const items = Object.entries(ST.inv).filter(([, q]) => q > 0).sort((a, b) => (I(b[0]).q - I(a[0]).q) || a[0].localeCompare(b[0]));
+  const total = items.reduce((s, [n, q]) => s + (tradeable(n) ? unitPrice(n) : I(n).s) * q, 0);
+  let h = `<div class="kv"><span class="lbl">Items</span><span class="num">${items.length} stacks</span></div><div class="kv"><span class="lbl">Estimated value</span>${money(total)}</div><div class="hint" style="margin:6px 0 10px">Tap an item to sell it, use it, disenchant it or put it in the guild bank.</div>`;
+  h += `<div class="grid">${items.map(([n, q]) => `<div class="slot" data-a="item" data-n="${esc(n)}">${ic(n, {ct:q})}</div>`).join('') || '<span class="muted">Your bags are empty.</span>'}</div>`;
+  const motes = Object.keys(MOTES).filter(m => (ST.inv[m] || 0) >= 10);
+  if (motes.length) h += `<div class="sep"></div><div class="actions">${motes.map(m => `<button class="btn" data-a="combine" data-n="${esc(m)}" data-q="all">${ic(MOTES[m], {size:20, noTip:1})} Combine ${esc(m.replace('Mote of ', ''))} (${Math.floor(ST.inv[m] / 10)})</button>`).join('')}</div>`;
+  if (ST.profs.enchanting) h += `<div class="actions"><button class="btn dark" data-a="deall">Disenchant all greens</button></div>`;
+  return h;
+}
+function vAH(){
+  const t = now(); let h = '';
+  h += `<div class="lbl" style="margin-bottom:6px">Trade Chat Requests</div>`;
+  if (!ST.comm.length) h += `<div class="hint">No requests right now. Players post in Trade chat every so often, even while you're away.</div>`;
+  for (const c of ST.comm) { const ok = (ST.inv[c.item] || 0) >= c.qty; h += `<div class="row">${ic(c.item, {ct:c.qty})}<div class="grow"><div class="t1 c-trade" style="white-space:normal">[${esc(c.who)}]: ${commText(c)}</div><div class="t2">Expires in ${fmtDur(c.exp - t)} · you have ${ST.inv[c.item] || 0}/${c.qty} · AH value ${money(unitPrice(c.item) * c.qty)}</div></div><button class="btn" data-a="fulfill" data-id="${c.id}" ${ok ? '' : 'disabled'}>Sell</button></div>`; }
+  h += `<div class="sep"></div><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px"><input id="ahq" class="inp" placeholder="Search the Auction House" value="${esc(SEL.ahq || '')}" style="flex:1;min-width:160px"><button class="btn sm ${SUB.ah === 'all' ? 'dark' : ''}" data-a="sub" data-v="mine">My items</button><button class="btn sm ${SUB.ah === 'all' ? '' : 'dark'}" data-a="sub" data-v="all">Browse all</button></div>`;
+  if (isDarkmoon()) h += `<div class="parch small" style="margin-bottom:8px">The Darkmoon Faire is in Terokkar Forest! Sayge's Fortune: +10% on Auction House sales this week.</div>`;
+  const q = (SEL.ahq || '').toLowerCase();
+  let names = SUB.ah === 'all' ? Object.keys(IT).filter(tradeable) : Object.keys(ST.inv).filter(tradeable);
+  if (q) names = names.filter(n => n.toLowerCase().includes(q));
+  names.sort((a, b) => basePrice(b) * (ST.inv[b] ? 1e3 : 1) - basePrice(a) * (ST.inv[a] ? 1e3 : 1));
+  h += names.slice(0, 80).map(n => { const tr = trend(n); return `<div class="row" data-a="item" data-n="${esc(n)}" style="cursor:pointer">${ic(n, {ct:ST.inv[n] || null, size:32})}<div class="grow"><div class="t1 tq${I(n).q}">${esc(n)}</div><div class="t2">${ST.inv[n] ? 'You have ' + ST.inv[n] : 'None in bags'}${G.bank[mkey(n)] ? ' · guild bank ' + G.bank[mkey(n)] : ''}</div></div><div style="text-align:right">${money(unitPrice(n, t))}<div class="small ${tr > 0 ? 'grn' : tr < 0 ? 'red' : 'muted'}">${tr > 0 ? '▲ rising' : tr < 0 ? '▼ falling' : '— steady'}</div></div></div>`; }).join('') || '<div class="hint">Nothing found.</div>';
+  return h;
+}
+function vGuild(){
+  const tabs = ['members','bank','sun']; const s = tabs.includes(SUB.guild) ? SUB.guild : 'sun'; SUB.guild = s;
+  let h = `<div class="subtabs"><button class="tab ${s === 'sun' ? 'on' : ''}" data-a="sub" data-v="sun">${ic('inv_shield_48', {noTip:1})}Shattered Sun</button><button class="tab ${s === 'members' ? 'on' : ''}" data-a="sub" data-v="members">${ic('inv_shirt_guildtabard_01', {noTip:1})}Roster</button><button class="tab ${s === 'bank' ? 'on' : ''}" data-a="sub" data-v="bank">${ic('inv_misc_bag_10_blue', {noTip:1})}Guild Bank</button></div>`;
+  if (NET.mode === 'local') h += `<div class="parch small" style="margin-bottom:10px">Solo mode: you are playing offline on this device. To play with a friend, set up the free Firebase database described in the README and share your Guild Code.</div>`;
+  if (s === 'members') {
+    const ms = Object.entries(G.members).sort((a, b) => (b[1].seen || 0) - (a[1].seen || 0));
+    h += ms.map(([pid, m]) => `<div class="row" data-a="who" data-pid="${esc(pid)}" style="cursor:pointer"><div class="grow"><div class="t1">${esc(m.name)} <span class="small yel">${esc(m.title || '')}</span> ${online(m) ? '<span class="pill grn">online</span>' : ''}</div><div class="t2">${esc(m.act || '')}${m.craft ? ' · crafting ' + esc(m.craft) : ''}</div><div class="drops">${Object.entries(m.profs || {}).map(([p, v]) => `<span class="pill">${PROFS[p]?.n || p} ${v}</span>`).join(' ')}</div></div><div class="small muted" style="text-align:right">${online(m) ? '' : fmtDur(now() - m.seen) + ' ago'}<br><span class="yel num">${m.pts || 0}</span> pts</div></div>`).join('') || '<div class="hint">No members yet.</div>';
+  } else if (s === 'bank') {
+    const items = Object.entries(G.bank).map(([k, q]) => [decodeURIComponent(k), q]).filter(([, q]) => q > 0).sort((a, b) => a[0].localeCompare(b[0]));
+    h += `<div class="hint" style="margin-bottom:8px">Shared with everyone in your guild. Deposit from your Bags, tap an item here to withdraw.</div><div class="grid">${items.map(([n, q]) => `<div class="slot" data-a="item" data-n="${esc(n)}">${ic(n, {ct:q})}</div>`).join('') || '<span class="muted">The guild bank is empty.</span>'}</div>`;
+  } else {
+    const pi = G.project.phase || 0, ph = PHASES[pi];
+    h += `<div class="kv"><span class="lbl">Your reputation</span><span>${repName(ST.rep)}</span></div>${repBar(ST.rep)}<div class="sep"></div>`;
+    h += `<div class="small muted" style="margin-bottom:6px">Isle of Quel'Danas — Phase ${Math.min(pi + 1, PHASES.length)} of ${PHASES.length}</div>`;
+    if (ph) {
+      h += `<div class="parch"><h3>${esc(ph.n)}</h3><div>${esc(ph.d)}</div><div style="margin-top:6px"><b>Reward:</b> ${esc(ph.reward)}</div></div><div style="margin-top:10px">`;
+      for (const [n, need] of Object.entries(ph.need)) { const got = G.project.got?.[mkey(n)] || 0, have = ST.inv[n] || 0; h += `<div class="row" style="min-height:44px">${ic(n, {size:32})}<div class="grow"><div class="t1 small">${esc(n)}</div><div class="bar green thin" style="margin-top:4px"><div class="fill" style="width:${got / need * 100}%"></div><span>${got} / ${need}</span></div></div><button class="btn sm" data-a="contribute" data-n="${esc(n)}" ${have && got < need ? '' : 'disabled'}>Give ${Math.min(have, need - got) || ''}</button></div>`; }
+      h += `</div><div class="hint">Materials you can't gather yourself can be bought on the Auction House or shared through the guild bank.</div>`;
+    } else h += `<div class="parch"><h3>The Isle is reclaimed!</h3><p>The Shattered Sun Offensive holds Sun's Reach. Kil'jaeden's shadow fades... for now.</p></div>`;
+    h += `<div class="sep"></div><div class="lbl">Completed</div>` + PHASES.slice(0, pi).map(p => `<div class="kv small"><span>✔ ${esc(p.n)}</span><span class="grn">${esc(p.reward)}</span></div>`).join('') || '<div class="hint">Nothing yet.</div>';
+  }
+  return h;
+}
+function vTrainer(){
+  let h = `<div class="lbl" style="margin-bottom:6px">Professions <span class="muted small">(${PRIMARY.filter(p => ST.profs[p]).length}/2 primary)</span></div>`;
+  const full = PRIMARY.filter(p => ST.profs[p]).length >= 2;
+  for (const p of Object.keys(PROFS).sort((a, b) => !!ST.profs[b] - !!ST.profs[a])) {
+    const pr = ST.profs[p];
+    if (pr) { const nx = RANKS[rankOf(pr.m) + 1]; h += `<div class="row">${ic(PROFS[p].icon, {noTip:1})}<div class="grow"><div class="t1">${PROFS[p].n} ${PROFS[p].secondary ? '<span class="pill">secondary</span>' : ''}</div>${skillBar(p)}</div><div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end">${nx ? `<button class="btn sm" data-a="train" data-p="${p}" ${pr.s >= nx.req && ST.gold >= nx.cost ? '' : 'disabled'}>Train ${nx.n} ${money(nx.cost)}</button>${pr.s < nx.req ? `<span class="small muted">needs skill ${nx.req}</span>` : ''}` : ''}<button class="btn sm dark" data-a="unlearn" data-p="${p}">Unlearn</button></div></div>`; }
+    else h += `<div class="row locked" style="opacity:.85">${ic(PROFS[p].icon, {noTip:1, dim:1})}<div class="grow"><div class="t1">${PROFS[p].n}</div><div class="t2">${PROFS[p].kind === 'gather' ? 'Gathering' : 'Crafting'}${PROFS[p].secondary ? ' · secondary, does not use a slot' : ''}</div></div><button class="btn sm" data-a="learn" data-p="${p}" ${!PROFS[p].secondary && full ? 'disabled' : ''}>Learn</button></div>`;
+  }
+  if (ST.profs.alchemy?.s >= 325) {
+    h += `<div class="sep"></div><div class="lbl">Alchemy Specialization ${ST.spec.alchemy ? `— <span class="wht">${SPECS[ST.spec.alchemy].n} Master</span>` : ''}</div><div class="actions">${Object.entries(SPECS).map(([k, s]) => `<button class="btn ${ST.spec.alchemy === k ? 'dark' : ''}" data-a="spec" data-s="${k}" ${ST.spec.alchemy === k ? 'disabled' : ''} title="${esc(s.d)}">${s.n} Master${ST.spec.alchemy ? ' (' + money(1500000) + ')' : ''}</button>`).join('')}</div><div class="hint">${Object.values(SPECS).map(s => s.n + ': ' + s.d).join(' ')}</div>`;
+  }
+  const nx = RIDING[ST.riding + 1];
+  h += `<div class="sep"></div><div class="lbl">Riding Trainer</div><div class="row">${ic(RIDING[mountTier(ST)].icon, {noTip:1})}<div class="grow"><div class="t1">${RIDING[mountTier(ST)].n}</div><div class="t2">Gathering speed x${speedMult(ST, now()).toFixed(2)}</div></div></div>`;
+  if (nx) h += `<div class="row">${ic(nx.icon, {noTip:1})}<div class="grow"><div class="t1">${nx.n}</div><div class="t2">${esc(nx.d)}</div></div><button class="btn" data-a="ride" ${ST.gold >= nx.cost ? '' : 'disabled'}>${money(nx.cost)}</button></div>`;
+  h += `<div class="sep"></div><div class="lbl">Attunements</div>`;
+  for (const [k, v] of Object.entries(KEYS)) h += `<div class="row ${ST.keys[k] ? '' : ''}">${ic(v.icon, {noTip:1})}<div class="grow"><div class="t1">${esc(v.n)}</div><div class="t2">${esc(v.desc)}</div></div>${ST.keys[k] ? '<span class="grn">Owned</span>' : `<button class="btn" data-a="key" data-k="${k}" ${ST.gold >= v.cost ? '' : 'disabled'}>${money(v.cost)}</button>`}</div>`;
+  const vend = RECIPES.filter(r => r.src === 'vendor' || r.src === 'rep');
+  h += `<div class="sep"></div><div class="lbl">Recipe Vendors & Shattered Sun Quartermaster</div><div class="hint">Requires the profession. Quartermaster recipes also require reputation (you have ${repName(ST.rep)}).</div>`;
+  for (const r of vend) { const own = ST.known[r.id], ok = ST.profs[r.p] && (!r.rep || ST.rep >= r.rep) && ST.gold >= r.cost; h += `<div class="row ${ST.profs[r.p] ? '' : 'locked'}">${ic(r.ri, {})}<div class="grow"><div class="t1 tq${I(r.o).q}">${esc(r.ri)}</div><div class="t2">${PROFS[r.p].n} (${r.s[0]})${r.rep ? ' · ' + repName(r.rep) + ' with Shattered Sun' : ''}</div></div>${own ? '<span class="grn small">Known</span>' : `<button class="btn sm" data-a="buyrec" data-id="${esc(r.id)}" ${ok ? '' : 'disabled'}>${money(r.cost)}</button>`}</div>`; }
+  return h;
+}
+function vFeats(){
+  const got = ACH.filter(a => ST.ach[a.id]); const pts = got.reduce((s, a) => s + achPts(a), 0);
+  const titles = ['', ...ACH.filter(a => a.title && ST.ach[a.id]).map(a => a.title)];
+  let h = `<div class="kv"><span class="lbl">Achievement points</span><span class="num yel" style="font-size:18px">${pts}</span></div><div class="kv"><span class="lbl">Earned</span><span class="num">${got.length} / ${ACH.length}</span></div>`;
+  if (titles.length > 1) h += `<div class="actions"><span class="lbl">Title:</span>${titles.map(t => `<button class="btn sm ${ST.title === t ? '' : 'dark'}" data-a="title" data-t="${esc(t)}">${t || 'None'}</button>`).join('')}</div>`;
+  h += `<div class="hint" style="margin:8px 0">Yes, we know: achievements arrived in patch 3.0. Consider them Feats of Strength from the future.</div>`;
+  const cats = [...new Set(ACH.map(a => a.c))];
+  for (const c of cats) {
+    h += `<div class="lbl" style="margin:12px 0 6px">${esc(c)}</div>`;
+    for (const a of ACH.filter(x => x.c === c)) { const g_ = ST.ach[a.id]; const hid = a.hidden && !g_; h += `<div class="achrow ${g_ ? 'got' : ''}">${ic(hid ? 'inv_misc_questionmark' : a.i, {noTip:1, q:g_ ? 4 : 1})}<div class="grow"><div class="an ${g_ ? 'yel' : ''}">${hid ? '???' : esc(a.n)}</div><div class="ad">${hid ? 'A hidden Feat. Keep exploring.' : esc(a.d)}${a.title && !hid ? ` <span class="yel">Title: ${esc(a.title)}</span>` : ''}</div>${g_ ? `<div class="when">${new Date(g_).toLocaleDateString('en-GB')}</div>` : ''}</div><div class="ap">${achPts(a)}</div></div>`; }
+  }
+  return h;
+}
+
+// ---------- Now panel (updated every frame) ----------
+function renderNow(){
+  if (!ST) return; const t = now(); let h = '';
+  if (ST.act) {
+    const sp = ALLSPOTS[ST.act.k + ':' + ST.act.id]; const p = clamp((t - ST.act.s0) / (ST.act.nx - ST.act.s0), 0, 1);
+    h += `<div class="line">${ic(sp.k === 'combat' ? 'ability_dualwield' : PROFS[sp.k].icon, {size:32, noTip:1})}<div class="lt"><b>${sp.k === 'combat' ? 'Fighting' : PROFS[sp.k].verb}</b><br>${esc(sp.n)} <span class="muted small">· ${esc(sp.z)}</span></div><button class="btn sm dark" data-a="stop">Stop</button></div><div class="bar"><div class="fill" style="width:${p * 100}%"></div><span>${sp.k === 'combat' ? 'Fighting' : sp.k === 'fishing' ? 'Fishing' : 'Gathering'}... ${fmtDur(ST.act.nx - t)}</span></div>`;
+  } else h += `<div class="line">${ic('Hearthstone', {size:32, noTip:1})}<div class="lt"><b>Idle in Shattrath</b><br><span class="muted small">Pick something to gather or fight in the Gathering tab.</span></div></div>`;
+  if (ST.cq) { const r = RBYID[ST.cq]; const p = clamp((t - ST.cs) / (ST.cn - ST.cs), 0, 1); h += `<div class="bar" style="margin-top:10px"><div class="fill" style="width:${p * 100}%"></div><span>${esc(r.o)}</span></div>`; }
+  if (ST.q.length) h += `<div class="queue">${ST.q.map((e, i) => { const r = RBYID[e.id]; const wait = ST.cq !== e.id && !canCraft(ST, r, t); return `<div class="qi">${ic(r.pros ? r.icon : r.o, {size:20, noTip:1})}<span>${esc(r.o)}</span><span class="muted">${e.n === -1 ? '∞' : 'x' + e.n}${wait ? (cdLeft(ST, r, t) ? ' · cooldown' : ' · waiting for reagents') : ''}</span><span class="x" data-a="unq" data-i="${i}">✕</span></div>`; }).join('')}</div>`;
+  const sl = Object.entries(SESSION).slice(-10);
+  if (sl.length) h += `<div class="sessionloot" title="Loot this session">${sl.map(([n, q]) => ic(n, {size:26, ct:q})).join('')}</div>`;
+  if ((ST.buffs.pinchy || 0) > t) h += `<div class="small yel" style="margin-top:6px">Mr. Pinchy's Blessing: ${fmtDur(ST.buffs.pinchy - t)}</div>`;
+  $('#now').innerHTML = h;
+}
+
+// ---------- Main loop ----------
+let lastTick = 0, lastSave = 0, nextAmbient = 0, nextSpam = 0;
+function tick(){
+  if (!ST || LOCKED) return;
+  const t = now(); const out = newOut(true);
+  ST.played += Math.min(t - (lastTick || t), 5000); lastTick = t;
+  const inv0 = JSON.stringify(ST.inv).length;
+  advance(ST, t, out);
+  for (const n of out.notable) NET.chat({pid:PID, name:ST.name, type:'loot', txt:n});
+  if (Object.keys(out.items).length || out.gold || Object.keys(out.skill).length) DIRTY = true;
+}
+function loop(){
+  tick(); renderNow(); renderTop();
+  const t = now();
+  if (DIRTY && t - LAST_RENDER > 1500) render(false);
+  if (t - lastSave > 15000) { lastSave = t; checkAch(true); saveNow(); }
+  else if (t % 3000 < 260) checkAch(true);
+  const hr = new Date().getHours(); if (hr >= 3 && hr < 5) ST.flags.night = 1;
+  if (t > nextAmbient) { if (nextAmbient) { const [ch, txt] = pick(AMBIENT); const who = pick(NPCS); chat(ch === 'Trade' ? 'c-trade' : 'c-gen', `[${ch === 'Trade' ? '2. Trade' : '1. General'}] [${who}]: ${txt.includes('Thunderfury') ? txt.replace(/\[Thunderfury[^\]]*\]/, `<a class="ilink link tq5" data-a="thunderfury">[Thunderfury, Blessed Blade of the Windseeker]</a>`) : linkify(esc(txt))}`); } nextAmbient = t + rnd(70, 200) * 1000; }
+  if (t > nextSpam) { if (nextSpam) { const id = rnd(1, 1e9); chat('c-whisper', `[${pick(['Xjkqzlw','Hfgoldvx','Qqwerzty','Lkjhgold'])}] whispers: ${esc(pick(GOLDSELLER))}`, null, `<button class="btn sm dark" data-a="report" data-id="${id}" data-rep="${id}">Report Spam</button>`); } nextSpam = t + rnd(9, 20) * MIN; }
+}
+
+// ---------- Slash commands & easter eggs ----------
+function onChatInput(txt){
+  txt = txt.trim(); if (!txt) return;
+  if (txt[0] !== '/') { if (MURLOC_UNTIL > now()) txt = pick(['Mrgglglgl!','Mrrrggk!','Aaaaaughibbrgubugbugrguburgle!','Mmmrrglllm?']); NET.chat({pid:PID, name:ST.name, type:'say', txt}); return; }
+  const [cmd, ...rest] = txt.slice(1).split(' '); const c = cmd.toLowerCase();
+  const E = s => chat('c-emote', s);
+  switch (c) {
+    case 'help': chat('c-sys', 'Commands: /roll, /played, /who, /dance, /cheer, /train, /chicken, /sit, /joke, /g &lt;msg&gt; ... and a few you will have to find yourself.'); break;
+    case 'roll': { const r = rnd(1, 100); NET.chat({pid:PID, name:ST.name, type:'sys', txt:`${ST.name} rolls ${r} (1-100)`}); if (r === 100) ST.flags.roll100 = 1; break; }
+    case 'played': chat('c-sys', `Total time played: ${fmtDur(ST.played)}. Time your character has been working in Outland: ${fmtDur(now() - ST.created)}.`); break;
+    case 'who': chat('c-sys', Object.values(G.members).map(m => `${m.name}${online(m) ? ' (online)' : ''}`).join(', ') + ` — ${Object.keys(G.members).length} player(s) total`); break;
+    case 'dance': E('You burst into dance.'); break;
+    case 'cheer': E('You cheer!'); break;
+    case 'train': E('You let off a train whistle. Choo Choo!'); break;
+    case 'chicken': E('With arms flapping, you strut around. Cluck, Cluck, Chicken.'); break;
+    case 'sit': E('You sit down.'); break;
+    case 'joke': E(pick(['You tell a joke: "Why did the gnome cross the road? To get to the other... wait, where did the road go?"', 'You tell a joke: "What do you call a rogue with no stealth? Dead."', 'You tell a joke: "How many paladins does it take to change a light bulb? None, they just bubble and hearth."'])); break;
+    case 'leeroy': case 'leroy': chat('c-yell', `${esc(ST.name)} yells: LEEEEEEEEEEEEROOOOOOOOOOY JENKINS!`); setTimeout(() => chat('c-emote', '...at least you have chicken.'), 1500); ST.flags.leeroy = 1; break;
+    case 'dkp': chat('c-raid', '[Raid Leader]: FIFTY DKP MINUS! FIFTY DKP MINUS!'); raidWarn('50 DKP MINUS!'); ST.flags.dkp = 1; break;
+    case 'moredots': chat('c-raid', '[Raid Leader]: MORE DOTS! MORE DOTS!'); raidWarn('MORE DOTS!'); break;
+    case 'g': case 'gu': NET.chat({pid:PID, name:ST.name, type:'say', txt:rest.join(' ')}); break;
+    case 'reload': location.reload(); break;
+    default: chat('c-sys', `Unknown command: ${esc(cmd)}. Type /help.`);
+  }
+  checkAch(true); DIRTY = true;
+}
+const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a']; let kpos = 0;
+document.addEventListener('keydown', e => {
+  kpos = e.key === KONAMI[kpos] ? kpos + 1 : (e.key === KONAMI[0] ? 1 : 0);
+  if (kpos === KONAMI.length && ST) { kpos = 0; ST.flags.konami = 1; MURLOC_UNTIL = now() + 2 * MIN; if (!ST.inv['Murloc Costume']) give(ST, 'Murloc Costume', 1, newOut(false)); raidWarn('Mrgglglglgl!'); chat('c-yell', 'A murloc yells: Aaaaaughibbrgubugbugrguburgle! <span class="c-sys">You receive item: [Murloc Costume].</span>'); checkAch(true); DIRTY = true; }
+  if (e.key === 'Escape') A.close();
+});
+let pokes = [];
+function seasonal(){
+  const d = new Date(), m = d.getMonth() + 1, day = d.getDate(), y = d.getFullYear();
+  const wv = (m === 12 && day >= 15) || (m === 1 && day <= 2);
+  if (wv) { const key = 'wv' + (m === 1 ? y - 1 : y); if (!ST.flags[key]) { ST.flags[key] = 1; give(ST, 'Smokywood Pastures Gift Pack', 1, newOut(false)); chat('c-sys', `Feast of Winter Veil! Greatfather Winter left a ${ilink('Smokywood Pastures Gift Pack')} in your bags.`); } }
+  if ((m === 10 && day >= 18) || (m === 11 && day === 1)) { const key = 'he' + y; if (!ST.flags[key]) { ST.flags[key] = 1; give(ST, 'Hallowed Wand - Pirate', 1, newOut(false)); chat('c-sys', `Hallow's End! The Headless Horseman rides tonight. You receive ${ilink('Hallowed Wand - Pirate')}. Arrr.`); } }
+  if ((m === 9 && day >= 20) || (m === 10 && day <= 4)) chat('c-sys', 'Brewfest is on outside Ironforge and Orgrimmar. Watch out for Dark Iron dwarves stealing the kegs!');
+  if (isDarkmoon()) chat('c-sys', "The Darkmoon Faire is in Terokkar Forest this week. Sayge's Fortune: +10% gold on Auction House sales.");
+}
+
+// ---------- Events ----------
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-a]');
+  if (el) { e.preventDefault(); const d = Object.assign({}, el.dataset); act(d.a, d); return; }
+  if (e.target.id === 'modal') A.close();
+});
+document.addEventListener('input', e => { if (e.target.id === 'ahq') { SEL.ahq = e.target.value; clearTimeout(window._ahT); window._ahT = setTimeout(() => { render(true); const i = $('#ahq'); if (i) { i.focus(); i.setSelectionRange(i.value.length, i.value.length); } }, 350); } });
+const fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
+if (fine) {
+  document.addEventListener('mouseover', e => { const el = e.target.closest('[data-n]'); if (!el || el.closest('#modal')) { if (TIPEL) closeTip(); return; } if (el !== TIPEL) { TIPEL = el; const tp = $('#tip'); tp.innerHTML = tipHtml(el.dataset.n); tp.classList.remove('hidden'); } });
+  document.addEventListener('mousemove', e => { if (!TIPEL) return; const tp = $('#tip'); const w = tp.offsetWidth, h = tp.offsetHeight; let x = e.clientX + 18, y = e.clientY + 14; if (x + w > innerWidth - 8) x = e.clientX - w - 14; if (y + h > innerHeight - 8) y = innerHeight - h - 8; tp.style.left = x + 'px'; tp.style.top = y + 'px'; });
+}
+
+// ---------- Boot ----------
+async function boot(){
+  const cfg = (window.SHATTRATH_CONFIG && window.SHATTRATH_CONFIG.firebase) || null;
+  NET = cfg ? new FireNet(cfg) : new LocalNet();
+  if (NET.mode === 'local') { $('#lgOnline').classList.add('hidden'); $('#lgRealm').textContent = 'Realm: Local (solo mode) — add a Firebase config to play with friends'; }
+  else $('#lgRealm').textContent = 'Realm: Shattrath (PvE) — online';
+  try { const last = JSON.parse(localStorage.getItem('shattrath_last') || 'null'); if (last) { $('#lgName').value = last.name || ''; $('#lgGuild').value = last.guild || ''; } } catch(e) {}
+  $('#lgGo').onclick = login;
+  ['lgName','lgGuild','lgPin'].forEach(id => $('#' + id).addEventListener('keydown', e => { if (e.key === 'Enter') login(); }));
+}
+async function login(){
+  const name = $('#lgName').value.trim(); const guild = $('#lgGuild').value.trim(); const pin = $('#lgPin').value;
+  const err = t => { $('#lgErr').textContent = t; };
+  if (!/^[A-Za-zÀ-ſ]{2,12}$/.test(name)) return err('Names must be 2-12 letters, no spaces or numbers.');
+  if (NET.mode === 'firebase' && (slug(guild).length < 3 || pin.length < 3)) return err('Enter a guild code (3+ letters) and a PIN (3+ digits).');
+  PID = slug(name); GUILD = NET.mode === 'firebase' ? slug(guild) : 'local'; GUILDNAME = guild.replace(/[<>]/g, ''); PIN = NET.mode === 'firebase' ? pin : '';
+  $('#lgGo').disabled = true; err('');
+  $('#login').classList.add('hidden'); $('#loading').classList.remove('hidden'); $('#ldTip').textContent = pick(TIPS); $('#ldFill').style.width = '20%';
+  try {
+    await NET.init(); $('#ldFill').style.width = '55%';
+    let st = await NET.login(GUILD, name, pin);
+    if (!st) { try { st = JSON.parse(localStorage.getItem('shattrath_cache_' + GUILD + '_' + PID) || 'null'); } catch(e) {} }
+    const isNew = !st; if (!st) st = newState(name);
+    ST = st; ST.name = name;
+    ['st','made','found','ach','keys','buffs','flags','known','spec','cds'].forEach(k => ST[k] = ST[k] || {});
+    ST.comm = ST.comm || []; ST.q = ST.q || [];
+    try { localStorage.setItem('shattrath_last', JSON.stringify({name, guild})); } catch(e) {}
+    await new Promise(r => { let n = 0; const done = () => { if (++n === 4) r(); }; NET.on('members', v => { G.members = v || {}; DIRTY = true; }); NET.on('bank', v => { G.bank = v || {}; DIRTY = true; done(); }); NET.on('market', v => { G.market = v || {}; done(); }); NET.on('project', v => { const prev = G.project?.phase; G.project = v || {phase:0, got:{}}; DIRTY = true; done(); }); done(); setTimeout(r, 6000); });
+    $('#ldFill').style.width = '85%';
+    MYSID = Math.random().toString(36).slice(2);
+    await NET.claim(MYSID);
+    NET.onSession(sid => { if (sid && sid !== MYSID) { LOCKED = true; modal(`<div class="ftitle">Disconnected</div><div class="fbody"><p>${esc(ST.name)} has logged in from another device. Only one session can play at a time.</p><div class="actions"><button class="btn" onclick="location.reload()">Log in here again</button></div></div>`); } });
+    // Offline progress
+    const away = now() - ST.t, inv0 = Object.assign({}, ST.inv), gold0 = ST.gold, sk0 = Object.fromEntries(Object.entries(ST.profs).map(([p, v]) => [p, v.s]));
+    const out = newOut(false); advance(ST, now(), out);
+    if (away > 20 * H) ST.flags.away = 1;
+    await new Promise(r => setTimeout(r, 500)); $('#ldFill').style.width = '100%';
+    await new Promise(r => setTimeout(r, 400));
+    $('#loading').classList.add('hidden'); $('#app').classList.remove('hidden');
+    chat('c-sys', `Welcome to Shattrath Trade! ${NET.mode === 'firebase' ? `Guild: &lt;${esc(GUILDNAME)}&gt;.` : 'Solo mode.'} Type /help for commands.`);
+    NET.onChat(m => guildMsg(m));
+    if (isNew) { chat('c-sys', 'You arrive in Shattrath City with 10 gold. A\'dal watches over you.'); VIEW = 'gather'; }
+    seasonal();
+    lastTick = now(); render(true);
+    if (!isNew && away > 2 * MIN) offlineModal(away, out, inv0, gold0, sk0);
+    for (const n of out.notable) NET.chat({pid:PID, name:ST.name, type:'loot', txt:n});
+    checkAch(true); saveNow();
+    setInterval(loop, 250);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) saveNow(); else { tick(); render(true); } });
+    window.addEventListener('pagehide', saveNow);
+    $('#chatIn').addEventListener('keydown', e => { if (e.key === 'Enter') { onChatInput(e.target.value); e.target.value = ''; } });
+    $('#chatBig').onclick = () => A.chatbig();
+    $('#logo').onclick = () => { const t = now(); pokes = pokes.filter(x => t - x < 4000); pokes.push(t); if (pokes.length >= 7) { pokes = []; ST.flags.poke = 1; raidWarn('Stop poking me!'); chat('c-yell', 'Peasant yells: Stop poking me! ...Ready to work.'); checkAch(true); } };
+  } catch(e) {
+    console.error(e); $('#loading').classList.add('hidden'); $('#login').classList.remove('hidden'); $('#lgGo').disabled = false;
+    err(e.message && e.message.includes('PIN') ? e.message : 'Could not connect: ' + (e.message || e));
+  }
+}
+function offlineModal(away, out, inv0, gold0, sk0){
+  const items = Object.entries(out.items).sort((a, b) => I(b[0]).q - I(a[0]).q || b[1] - a[1]);
+  const skills = Object.entries(ST.profs).filter(([p, v]) => v.s !== sk0[p]).map(([p, v]) => `<div class="kv">${ic(PROFS[p].icon, {size:20, noTip:1})}<span style="flex:1;margin-left:6px">${PROFS[p].n}</span><span class="num">${sk0[p]} → <span class="grn">${v.s}</span></span></div>`).join('');
+  const ev = out.ev; const evs = [ev.gank && `Ganked ${ev.gank} time(s) by rogues`, ev.ninja && `${ev.ninja} node(s) ninja'd by druids`, ev.rich && `${ev.rich} rich deposit(s)`, ev.procs && `${ev.procs} mastery proc(s)`, ev.boom && `${ev.boom} engineering explosion(s)`, ev.hogger && `Fought Hogger ${ev.hogger} time(s)`].filter(Boolean);
+  modal(`<div class="ftitle">Welcome back, ${esc(ST.name)}</div><div class="fbody">
+    <div class="parch small">While you were away (${fmtDur(away)}${away > CAP_OFFLINE ? ', progress capped at 24h' : ''}), your character kept working.</div>
+    ${items.length ? `<div class="lbl" style="margin:10px 0 6px">Loot</div><div class="grid">${items.map(([n, q]) => `<div class="slot" data-a="item" data-n="${esc(n)}">${ic(n, {ct:q})}</div>`).join('')}</div>` : '<div class="hint" style="margin-top:8px">Nothing gathered. Set an activity before you leave next time!</div>'}
+    ${out.gold ? `<div class="kv" style="margin-top:8px"><span class="lbl">Coin looted</span>${money(out.gold)}</div>` : ''}
+    ${skills ? `<div class="lbl" style="margin:10px 0 4px">Skill-ups</div>${skills}` : ''}
+    ${Object.keys(out.made).length ? `<div class="lbl" style="margin:10px 0 4px">Crafted</div><div class="small">${Object.entries(out.made).map(([n, q]) => `${ilink(n)} x${q}`).join(', ')}</div>` : ''}
+    ${evs.length ? `<div class="lbl" style="margin:10px 0 4px">Events</div><div class="small">${evs.join(' · ')}</div>` : ''}
+    <div class="actions"><button class="btn" data-a="close">Okay</button></div></div>`);
+}
+boot();
+
+</script>
+</body>
+</html>
